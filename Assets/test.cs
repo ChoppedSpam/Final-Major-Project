@@ -19,6 +19,8 @@ public class test : MonoBehaviour
     public float yinput;
     public float speed = 5f;
 
+    public bool hitting;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -33,6 +35,15 @@ public class test : MonoBehaviour
     {
         htboxtimer += Time.deltaTime;
 
+        if (htboxtimer < 0.35f)
+        {
+            hitting = true;
+        }
+        else
+        {
+            hitting=false;
+        }
+
         xinput = Input.GetAxis("Horizontal");
 
 
@@ -46,19 +57,36 @@ public class test : MonoBehaviour
         {
             htbox2.SetActive(true);
         }
-        if (htboxtimer > 0.75f)
+        if (htboxtimer > 0.35)
         {
             htbox1.SetActive(false);
             htbox2.SetActive(false);
         }
 
-        
+        if(hitting == true)
+        {
+            rb.constraints = RigidbodyConstraints2D.FreezePositionX;
+            rb.constraints = RigidbodyConstraints2D.FreezePositionY;
+            
+        }
+        else
+        {
+            rb.constraints = RigidbodyConstraints2D.None;
+        }
 
-        
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            rb.AddForce(new Vector2(0, 10), ForceMode2D.Impulse);
+        }
     }
 
     void FixedUpdate()
     {
-        rb.velocity = new Vector2(xinput * speed, yinput * speed);
+
+        if (hitting != true)
+        {
+            rb.velocity = new Vector2(xinput * speed,yinput * speed);
+        }
     }
 }
