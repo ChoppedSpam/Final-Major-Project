@@ -135,11 +135,11 @@ GameObject:
   - component: {fileID: 395073200}
   m_Layer: 0
   m_Name: HitBox
-  m_TagString: Untagged
+  m_TagString: Hit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!212 &395073200
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -200,7 +200,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 395073199}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.6, y: 0.184, z: 0}
+  m_LocalPosition: {x: 0.6, y: 0.1, z: 0}
   m_LocalScale: {x: 1, y: 0.19484214, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -425,6 +425,7 @@ MonoBehaviour:
   xinput: 0
   yinput: 0
   speed: 7.5
+  hitting: 0
 --- !u!212 &1226001742
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -485,7 +486,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1226001740}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.7207, y: -0.7613, z: 0}
+  m_LocalPosition: {x: -4.7207, y: -0.89999986, z: 0}
   m_LocalScale: {x: 2.0185, y: 4.6574, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -520,7 +521,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 4
+  m_Constraints: 0
 --- !u!61 &1226001745
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -578,11 +579,11 @@ GameObject:
   - component: {fileID: 1798698481}
   m_Layer: 0
   m_Name: HitBox (1)
-  m_TagString: Untagged
+  m_TagString: Hit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!212 &1798698481
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -642,9 +643,9 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1798698480}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.1186, y: 0.184, z: 0}
-  m_LocalScale: {x: 0.9771008, y: 0.19485144, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 1.1186001, y: 0.10000008, z: 0}
+  m_LocalScale: {x: 0.9771007, y: 0.19485146, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1226001743}
@@ -793,6 +794,7 @@ GameObject:
   - component: {fileID: 2002519430}
   - component: {fileID: 2002519429}
   - component: {fileID: 2002519428}
+  - component: {fileID: 2002519433}
   m_Layer: 0
   m_Name: Square (1)
   m_TagString: Untagged
@@ -871,7 +873,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 4
+  m_Constraints: 0
 --- !u!114 &2002519430
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -894,6 +896,7 @@ MonoBehaviour:
   xinput: 0
   yinput: 0
   speed: 7.5
+  hitting: 0
 --- !u!212 &2002519431
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -954,10 +957,23 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2002519427}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.05, y: -0.7613, z: 0}
+  m_LocalPosition: {x: 3.05, y: -1.09, z: 0}
   m_LocalScale: {x: 2.0185, y: 4.6574, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2002519433
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2002519427}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e58d73c11aa3da458d05e70dd1bb763, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rb: {fileID: 2002519429}

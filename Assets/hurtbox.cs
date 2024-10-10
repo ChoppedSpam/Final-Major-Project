@@ -17,10 +17,11 @@ public class hurtbox : MonoBehaviour
         
     }
 
-    private void OnTriggerStay2D(Collider2D collision)
+    private void OnCollision2D(Collider2D collision)
     {
         if(collision.gameObject.tag == "Hit")
         {
+            Debug.Log("hit");
             rb.AddForce(new Vector2(0, 10), ForceMode2D.Impulse);
         }
         
