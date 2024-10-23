@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Conductor : MonoBehaviour
 {
+    public bool even;
+
     public GameObject hitbox1;
     public GameObject hitbox2;
 
@@ -57,18 +59,27 @@ public class Conductor : MonoBehaviour
         songPositionInBeats = songPosition / secPerBeat;
 
         currentBeat = songPositionInBeats;
-        
+        BeatRounded = Mathf.CeilToInt(currentBeat);
 
-
-        if (songPositionInBeats == BeatRounded)
+        if (BeatRounded%2 == 0)
         {
-            BeatRounded = Mathf.CeilToInt(currentBeat);
+            even = true;
+        }
+        else
+        {
+            even = false;
+        }
+
+
+        if (even == true)
+        {
+            Debug.Log("Hit");
             hitbox1.SetActive(true);
             hitbox2.SetActive(false);
             
         }
         
-        if (songPositionInBeats != BeatRounded)
+        if (even == false)
         {
             hitbox1.SetActive(false);
             hitbox2.SetActive(true);

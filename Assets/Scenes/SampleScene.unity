@@ -617,6 +617,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8477b8d29d07424aa932a54ff9d1cc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  even: 0
   hitbox1: {fileID: 33078878}
   hitbox2: {fileID: 2123930175}
   songBpm: 142
