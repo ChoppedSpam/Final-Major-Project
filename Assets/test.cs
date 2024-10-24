@@ -1,11 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class test : MonoBehaviour
 {
+    public TMP_Text Hits;
+
+
+    public int hit;
+
     public GameObject htbox1;
-    public GameObject htbox2;
+    //public GameObject htbox2;
     public GameObject Player;
 
     public float htboxtimer= 0;
@@ -27,15 +33,17 @@ public class test : MonoBehaviour
         htboxtimer = 2;
         rb = GetComponent<Rigidbody2D>();
         htbox1.SetActive(false);
-        htbox2.SetActive(false);
+        //htbox2.SetActive(false);
     }
 
     // Update is called once per frame
     void Update()
     {
+        Hits.text = hit.ToString();
+
         htboxtimer += Time.deltaTime;
 
-        if (htboxtimer < 0.35f)
+        /*if (htboxtimer < 0.35f)
         {
             hitting = true;
         }
@@ -47,11 +55,7 @@ public class test : MonoBehaviour
         xinput = Input.GetAxis("Horizontal");
 
 
-        if (Input.GetKeyDown(KeyCode.E)) 
-        {
-            htboxtimer = 0;
-            htbox1.SetActive(true);
-        }
+        
 
         if (htboxtimer > 0.25f)
         {
@@ -73,11 +77,22 @@ public class test : MonoBehaviour
         {
             rb.constraints = RigidbodyConstraints2D.None;
         }
-
+        
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
             rb.AddForce(new Vector2(0, 10), ForceMode2D.Impulse);
+        }
+        */
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            htboxtimer = 0;
+            htbox1.SetActive(true);
+        }
+
+        if (htboxtimer > 0.25f)
+        {
+            htbox1.SetActive(false);
         }
     }
 
@@ -87,6 +102,33 @@ public class test : MonoBehaviour
         if (hitting != true)
         {
             rb.velocity = new Vector2(xinput * speed,yinput * speed);
+        }
+    }
+
+    /*void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "Hit")
+        {
+            Debug.Log("hit");
+        }
+
+    }*/
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "Hit")
+        {
+            Debug.Log("hit");
+            hit++;
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "Hit")
+        {
+            Debug.Log("hit");
+            hit++;
         }
     }
 }

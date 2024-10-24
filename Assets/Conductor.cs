@@ -73,7 +73,7 @@ public class Conductor : MonoBehaviour
 
         if (even == true)
         {
-            Debug.Log("Hit");
+            
             hitbox1.SetActive(true);
             hitbox2.SetActive(false);
             

@@ -17,7 +17,7 @@ public class hurtbox : MonoBehaviour
         
     }
 
-    private void OnCollision2D(Collider2D collision)
+    /*private void OnCollisionEnter2D(Collision2D collision)
     {
         if(collision.gameObject.tag == "Hit")
         {
@@ -25,5 +25,5 @@ public class hurtbox : MonoBehaviour
             rb.AddForce(new Vector2(0, 10), ForceMode2D.Impulse);
         }
         
-    }
+    }*/
 }
