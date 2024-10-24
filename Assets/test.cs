@@ -6,9 +6,13 @@ using UnityEngine;
 public class test : MonoBehaviour
 {
     public TMP_Text Hits;
+    public TMP_Text Hitslate;
+    public TMP_Text HitsPerfect;
 
 
-    public int hit;
+    public int hitearly;
+    public int hitperfect;
+    public int hitlate;
 
     public GameObject htbox1;
     //public GameObject htbox2;
@@ -27,6 +31,9 @@ public class test : MonoBehaviour
 
     public bool hitting;
 
+    
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -39,7 +46,11 @@ public class test : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Hits.text = hit.ToString();
+        
+
+        Hits.text = hitearly.ToString();
+        Hitslate.text = hitlate.ToString();
+        HitsPerfect.text = hitperfect.ToString();
 
         htboxtimer += Time.deltaTime;
 
@@ -99,10 +110,10 @@ public class test : MonoBehaviour
     void FixedUpdate()
     {
 
-        if (hitting != true)
+        /*if (hitting != true)
         {
             rb.velocity = new Vector2(xinput * speed,yinput * speed);
-        }
+        }*/
     }
 
     /*void OnTriggerEnter2D(Collider2D collision)
@@ -114,21 +125,5 @@ public class test : MonoBehaviour
 
     }*/
 
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if (collision.gameObject.tag == "Hit")
-        {
-            Debug.Log("hit");
-            hit++;
-        }
-    }
-
-    private void OnTriggerStay2D(Collider2D collision)
-    {
-        if (collision.gameObject.tag == "Hit")
-        {
-            Debug.Log("hit");
-            hit++;
-        }
-    }
+    
 }

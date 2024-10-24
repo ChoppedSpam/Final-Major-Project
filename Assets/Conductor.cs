@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Conductor : MonoBehaviour
 {
+    public float timepressed;
+
     public bool even;
 
     public GameObject hitbox1;
@@ -30,6 +32,7 @@ public class Conductor : MonoBehaviour
 
     public float currentBeat;
     public float BeatRounded;
+    public float BeatRoundedDown;
 
 
     // Start is called before the first frame update
@@ -60,6 +63,7 @@ public class Conductor : MonoBehaviour
 
         currentBeat = songPositionInBeats;
         BeatRounded = Mathf.CeilToInt(currentBeat);
+        BeatRoundedDown = Mathf.FloorToInt(currentBeat);
 
         if (BeatRounded%2 == 0)
         {
@@ -83,6 +87,11 @@ public class Conductor : MonoBehaviour
         {
             hitbox1.SetActive(false);
             hitbox2.SetActive(true);
+        }
+
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            timepressed = songPositionInBeats;
         }
     }
 }
