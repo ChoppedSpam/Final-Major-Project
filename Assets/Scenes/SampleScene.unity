@@ -666,9 +666,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e58d73c11aa3da458d05e70dd1bb763, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  late: 0
+  early: 0
   Conductor: {fileID: 596796328}
   counter: 0
   Player: {fileID: 2002519427}
+  timepressed: 0
 --- !u!1 &174344310
 GameObject:
   m_ObjectHideFlags: 0
@@ -1336,6 +1339,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8477b8d29d07424aa932a54ff9d1cc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  beatstomiss: 0100000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000c0000000d0000000e0000000f0000001000000011000000120000001300000014000000
+  Early: 0.1
+  Late: 0
   timepressed: 0
   even: 0
   hitbox1: {fileID: 33078878}
@@ -1347,8 +1353,9 @@ MonoBehaviour:
   dspSongTime: 0
   musicSource: {fileID: 596796330}
   currentBeat: 0
-  BeatRounded: 1
+  BeatRounded: 0
   BeatRoundedDown: 0
+  offline: 0
 --- !u!82 &596796330
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2185,7 +2192,7 @@ SpriteRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2002519427}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
