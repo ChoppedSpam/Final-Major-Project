@@ -6,11 +6,16 @@ using static UnityEditor.Experimental.AssetDatabaseExperimental.AssetDatabaseCou
 
 public class hurtbox : MonoBehaviour
 {
+    public float late;
+    public float early;
+
     public GameObject Conductor;
 
     public bool counter = false;
     //public Rigidbody2D rb;
     public GameObject Player;
+
+    public float timepressed;
 
 
     void Start()
@@ -21,25 +26,72 @@ public class hurtbox : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        early = (Conductor.GetComponent<Conductor>().BeatRounded - 0.6f);
+        late = (Conductor.GetComponent<Conductor>().BeatRounded - 0.4f);
+
+
+
+        timepressed = Conductor.GetComponent<Conductor>().timepressed;
+
         if (counter == true)
         {
-            if (Conductor.GetComponent<Conductor>().timepressed > (Conductor.GetComponent<Conductor>().songPositionInBeats - 0.1f) && Conductor.GetComponent<Conductor>().timepressed < (Conductor.GetComponent<Conductor>().songPositionInBeats + 0.1f))
+            if (timepressed < early)
+            {
+                Player.GetComponent<test>().hitearly++;
+                counter = false;
+            }
+            else if (timepressed > late)
+            {
+                Player.GetComponent<test>().hitlate++;
+                counter = false;
+            }
+            else
+            {
+                Player.GetComponent<test>().hitperfect++;
+                counter = false;
+            }
+
+
+
+
+
+            /*if (timepressed > (Conductor.GetComponent<Conductor>().songPositionInBeats - 0.1f) && timepressed < (Conductor.GetComponent<Conductor>().songPositionInBeats + 0.1f))
             {
                 Player.GetComponent<test>().hitperfect++;
                 counter = false;
             } 
             
-            if (Conductor.GetComponent<Conductor>().timepressed > (Conductor.GetComponent<Conductor>().songPositionInBeats + 0.1f) && Conductor.GetComponent<Conductor>().timepressed < (Conductor.GetComponent<Conductor>().songPositionInBeats + 0.5f))
+            if (timepressed > (Conductor.GetComponent<Conductor>().songPositionInBeats + 0.1f) && timepressed < (Conductor.GetComponent<Conductor>().songPositionInBeats + 0.5f))
             {
                 Player.GetComponent<test>().hitlate++;
                 counter = false;
             }
 
-            if (Conductor.GetComponent<Conductor>().timepressed < (Conductor.GetComponent<Conductor>().songPositionInBeats - 0.1f) && Conductor.GetComponent<Conductor>().timepressed > (Conductor.GetComponent<Conductor>().songPositionInBeats - 0.5f))
+            if (timepressed < (Conductor.GetComponent<Conductor>().songPositionInBeats - 0.1f) && timepressed > (Conductor.GetComponent<Conductor>().songPositionInBeats - 0.5f))
             {
                 Player.GetComponent<test>().hitearly++;
                 counter = false;
+            }*/
+
+            /*if(timepressed > (Conductor.GetComponent<Conductor>().BeatRoundedDown + 0.4)  && (timepressed > Conductor.GetComponent<Conductor>().BeatRounded - 0.4))
+            {
+                Player.GetComponent<test>().hitperfect++;
+                counter = false;
             }
+
+            if (timepressed < (Conductor.GetComponent<Conductor>().BeatRoundedDown + 0.4))
+            {
+                Player.GetComponent<test>().hitlate++;
+                counter = false;
+            }
+
+            if (timepressed > (Conductor.GetComponent<Conductor>().BeatRoundedDown + 0.6))
+            {
+                Player.GetComponent<test>().hitearly++;
+                counter = false;
+            }*/
+
+
 
         }
     }
