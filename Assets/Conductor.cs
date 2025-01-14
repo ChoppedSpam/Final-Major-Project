@@ -69,9 +69,11 @@ public class Conductor : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        offline = false;
+
         foreach (var item in beatstomiss)
         {
-            offline = false;
+            //offline = false;
 
             if (item == BeatRounded)
             {
