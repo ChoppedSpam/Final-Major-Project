@@ -2,10 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Burst.CompilerServices;
 using UnityEngine;
+using UnityEngine.UI;
 using static UnityEditor.Experimental.AssetDatabaseExperimental.AssetDatabaseCounters;
 
 public class hurtbox : MonoBehaviour
 {
+    public GameObject EnemyTracker;
+    public GameObject Enemy;
+    public GameObject EnemyHealthSlider;
+    public float enemyhealth = 100;
+
     public float late;
     public float early;
 
@@ -20,12 +26,14 @@ public class hurtbox : MonoBehaviour
 
     void Start()
     {
-        
+        enemyhealth = 100f;  
     }
 
     // Update is called once per frame
     void Update()
     {
+        EnemyHealthSlider.GetComponent<Slider>().value = enemyhealth * 0.01f;
+
         early = (Conductor.GetComponent<Conductor>().BeatRounded - 0.6f);
         late = (Conductor.GetComponent<Conductor>().BeatRounded - 0.4f);
 
@@ -38,22 +46,30 @@ public class hurtbox : MonoBehaviour
             if (timepressed < early)
             {
                 Player.GetComponent<test>().hitearly++;
+                enemyhealth = enemyhealth - 10f;
                 counter = false;
+                
             }
             else if (timepressed > late)
             {
                 Player.GetComponent<test>().hitlate++;
+                enemyhealth = enemyhealth - 10f;
                 counter = false;
+                
             }
             else
             {
                 Player.GetComponent<test>().hitperfect++;
+                enemyhealth = enemyhealth - 15f;
                 counter = false;
+                
             }
 
-
-
-
+            if (enemyhealth <= 0f)
+            {
+                ResetEnemy();
+                EnemyHealthSlider.SetActive(false);
+            }
 
             /*if (timepressed > (Conductor.GetComponent<Conductor>().songPositionInBeats - 0.1f) && timepressed < (Conductor.GetComponent<Conductor>().songPositionInBeats + 0.1f))
             {
@@ -90,9 +106,6 @@ public class hurtbox : MonoBehaviour
                 Player.GetComponent<test>().hitearly++;
                 counter = false;
             }*/
-
-
-
         }
     }
 
@@ -103,6 +116,16 @@ public class hurtbox : MonoBehaviour
             Debug.Log("hit");
             counter = true;
         }
+    }
+
+    public void ResetEnemy()
+    {
+        Enemy.GetComponent<Rigidbody2D>().AddForce(new Vector2(50, 50), ForceMode2D.Impulse);
+
+        /*if (EnemyTracker.GetComponent<EnemyTracker>().EnemyPresent == false && EnemyTracker.GetComponent<EnemyTracker>().EnemyOutofBounds == false)
+        {
+            enemyhealth = 100f;
+        }*/
     }
 
     /*private void OnCollisionEnter2D(Collision2D collision)

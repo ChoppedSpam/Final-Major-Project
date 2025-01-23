@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class Conductor : MonoBehaviour
 {
+    public GameObject hurtbox;
     public int[] beatstomiss;
 
     [Range(0.1f, 0.4f)]
@@ -81,6 +82,13 @@ public class Conductor : MonoBehaviour
                 hitbox1.SetActive(false);
                 hitbox2.SetActive(false);
             }
+        }
+
+        if (hurtbox.GetComponent<hurtbox>().enemyhealth <= 0f)
+        {
+            offline = true;
+            hitbox1.SetActive(false);
+            hitbox2.SetActive(false);
         }
 
 
