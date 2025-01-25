@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Burst.CompilerServices;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using static UnityEditor.Experimental.AssetDatabaseExperimental.AssetDatabaseCounters;
@@ -8,6 +9,7 @@ using static UnityEditor.Experimental.AssetDatabaseExperimental.AssetDatabaseCou
 public class hurtbox : MonoBehaviour
 {
     public GameObject EnemyTracker;
+    public GameObject OOBTracker;
     public GameObject Enemy;
     public GameObject EnemyHealthSlider;
     public float enemyhealth = 100;
@@ -23,9 +25,10 @@ public class hurtbox : MonoBehaviour
 
     public float timepressed;
 
-
+    public Transform thispos;
     void Start()
     {
+        
         enemyhealth = 100f;  
     }
 
@@ -122,10 +125,12 @@ public class hurtbox : MonoBehaviour
     {
         Enemy.GetComponent<Rigidbody2D>().AddForce(new Vector2(50, 50), ForceMode2D.Impulse);
 
-        /*if (EnemyTracker.GetComponent<EnemyTracker>().EnemyPresent == false && EnemyTracker.GetComponent<EnemyTracker>().EnemyOutofBounds == false)
+        if (EnemyTracker.GetComponent<EnemyTracker>().EnemyPresent == false && OOBTracker.GetComponent<OOB>().EnemyOutofBounds == false)
         {
             enemyhealth = 100f;
-        }*/
+            Enemy.transform.position = thispos.position;
+
+        }
     }
 
     /*private void OnCollisionEnter2D(Collision2D collision)
