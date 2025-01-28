@@ -665,17 +665,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   EnemyTracker: {fileID: 1514813752}
-  OOBTracker: {fileID: 0}
+  OOBTracker: {fileID: 540877713}
   Enemy: {fileID: 2055749617}
   EnemyHealthSlider: {fileID: 411970563}
   enemyhealth: 0.01
+  step: 1
   late: 0
   early: 0
   Conductor: {fileID: 596796328}
   counter: 0
   Player: {fileID: 2002519427}
   timepressed: 0
-  thispos: {fileID: 1514813755}
+  thispos: {fileID: 1274300152}
 --- !u!1 &174344310
 GameObject:
   m_ObjectHideFlags: 0
@@ -1428,7 +1429,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0.9513341, y: 0.63749194}
@@ -1467,13 +1468,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 540877713}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.461692, y: -0.93, z: 0}
-  m_LocalScale: {x: 2.7536, y: 2.7536, z: 2.7536}
+  m_LocalRotation: {x: -0, y: -0, z: -0.4855329, w: 0.8742184}
+  m_LocalPosition: {x: 13.1174965, y: -3.153433, z: 0}
+  m_LocalScale: {x: 1.0480201, y: 12.042568, z: 2.7536}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -58.095}
 --- !u!1 &554557572
 GameObject:
   m_ObjectHideFlags: 0
@@ -2242,6 +2243,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1038261423}
   m_CullTransparentMesh: 1
+--- !u!1 &1274300151
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1274300152}
+  m_Layer: 0
+  m_Name: Spawn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1274300152
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1274300151}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.461692, y: -1.26, z: 0}
+  m_LocalScale: {x: 0.47551918, y: 0.47551918, z: 0.47551918}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1326277401
 GameObject:
   m_ObjectHideFlags: 0
@@ -2723,9 +2755,11 @@ MonoBehaviour:
   Hits: {fileID: 811597383}
   Hitslate: {fileID: 118512436}
   HitsPerfect: {fileID: 383915382}
+  Score: {fileID: 0}
   hitearly: 0
   hitperfect: 0
   hitlate: 0
+  score: 0
   htbox1: {fileID: 168547460}
   Player: {fileID: 2002519427}
   htboxtimer: 0
@@ -3218,5 +3252,6 @@ SceneRoots:
   - {fileID: 596796331}
   - {fileID: 554557576}
   - {fileID: 1326277404}
+  - {fileID: 1274300152}
   - {fileID: 1514813755}
   - {fileID: 540877716}

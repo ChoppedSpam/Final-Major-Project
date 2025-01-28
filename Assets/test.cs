@@ -8,11 +8,15 @@ public class test : MonoBehaviour
     public TMP_Text Hits;
     public TMP_Text Hitslate;
     public TMP_Text HitsPerfect;
+    public TMP_Text Miss;
+    public TMP_Text Score;
 
 
     public int hitearly;
     public int hitperfect;
     public int hitlate;
+    public int miss;
+    public int score;
 
     public GameObject htbox1;
     //public GameObject htbox2;
@@ -51,6 +55,7 @@ public class test : MonoBehaviour
         Hits.text = hitearly.ToString();
         Hitslate.text = hitlate.ToString();
         HitsPerfect.text = hitperfect.ToString();
+        Score.text = score.ToString();
 
         htboxtimer += Time.deltaTime;
 
@@ -101,7 +106,7 @@ public class test : MonoBehaviour
             htbox1.SetActive(true);
         }
 
-        if (htboxtimer > 0.25f)
+        if (htboxtimer > 0.2f)
         {
             htbox1.SetActive(false);
         }

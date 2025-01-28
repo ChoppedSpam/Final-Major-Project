@@ -2,7 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Burst.CompilerServices;
 using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
 using static UnityEditor.Experimental.AssetDatabaseExperimental.AssetDatabaseCounters;
 
@@ -13,9 +15,12 @@ public class hurtbox : MonoBehaviour
     public GameObject Enemy;
     public GameObject EnemyHealthSlider;
     public float enemyhealth = 100;
+    public float step = 1f;
 
     public float late;
     public float early;
+    public float latemiss;
+    public float earlymiss;
 
     public GameObject Conductor;
 
@@ -28,17 +33,26 @@ public class hurtbox : MonoBehaviour
     public Transform thispos;
     void Start()
     {
-        
         enemyhealth = 100f;  
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (EnemyTracker.GetComponent<EnemyTracker>().EnemyPresent == false && OOBTracker.GetComponent<OOB>().EnemyOutofBounds == true)
+        {
+            Debug.Log("Reset");
+            enemyhealth = 100f;
+            //Enemy.transform.position = Vector3.MoveTowards(transform.position, thispos.position, step);
+            Enemy.transform.position = thispos.position;
+        }
+
         EnemyHealthSlider.GetComponent<Slider>().value = enemyhealth * 0.01f;
 
-        early = (Conductor.GetComponent<Conductor>().BeatRounded - 0.6f);
+        early = (Conductor.GetComponent<Conductor>().BeatRounded - 0.5f);
         late = (Conductor.GetComponent<Conductor>().BeatRounded - 0.4f);
+        latemiss = (Conductor.GetComponent<Conductor>().BeatRounded - 0.7f);
+        earlymiss = (Conductor.GetComponent<Conductor>().BeatRounded - 0.3f);
 
 
 
@@ -49,6 +63,7 @@ public class hurtbox : MonoBehaviour
             if (timepressed < early)
             {
                 Player.GetComponent<test>().hitearly++;
+                Player.GetComponent<test>().score = Player.GetComponent<test>().score + 100;
                 enemyhealth = enemyhealth - 10f;
                 counter = false;
                 
@@ -56,6 +71,7 @@ public class hurtbox : MonoBehaviour
             else if (timepressed > late)
             {
                 Player.GetComponent<test>().hitlate++;
+                Player.GetComponent<test>().score = Player.GetComponent<test>().score + 100;
                 enemyhealth = enemyhealth - 10f;
                 counter = false;
                 
@@ -63,9 +79,20 @@ public class hurtbox : MonoBehaviour
             else
             {
                 Player.GetComponent<test>().hitperfect++;
+                Player.GetComponent<test>().score = Player.GetComponent<test>().score + 300;
                 enemyhealth = enemyhealth - 15f;
                 counter = false;
                 
+            }
+
+            if(timepressed <= earlymiss)
+            {
+                Player.GetComponent<test>().miss++;
+            }
+
+            if (timepressed >= latemiss)
+            {
+                Player.GetComponent<test>().miss++;
             }
 
             if (enemyhealth <= 0f)
@@ -73,6 +100,12 @@ public class hurtbox : MonoBehaviour
                 ResetEnemy();
                 EnemyHealthSlider.SetActive(false);
             }
+            else
+            {
+                EnemyHealthSlider.SetActive(true);
+            }
+
+            
 
             /*if (timepressed > (Conductor.GetComponent<Conductor>().songPositionInBeats - 0.1f) && timepressed < (Conductor.GetComponent<Conductor>().songPositionInBeats + 0.1f))
             {
@@ -123,14 +156,7 @@ public class hurtbox : MonoBehaviour
 
     public void ResetEnemy()
     {
-        Enemy.GetComponent<Rigidbody2D>().AddForce(new Vector2(50, 50), ForceMode2D.Impulse);
-
-        if (EnemyTracker.GetComponent<EnemyTracker>().EnemyPresent == false && OOBTracker.GetComponent<OOB>().EnemyOutofBounds == false)
-        {
-            enemyhealth = 100f;
-            Enemy.transform.position = thispos.position;
-
-        }
+        Enemy.GetComponent<Rigidbody2D>().AddForce(new Vector2(70, 70), ForceMode2D.Impulse); 
     }
 
     /*private void OnCollisionEnter2D(Collision2D collision)

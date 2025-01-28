@@ -26,12 +26,18 @@ public class EnemyTracker : MonoBehaviour
         if(collision.gameObject.tag == "Enemy")
         {
             EnemyPresent = true;
-            if(hurtbox.GetComponent<hurtbox>().enemyhealth <= 0f)
+
+
+            /*if(hurtbox.GetComponent<hurtbox>().enemyhealth <= 0f)
             {
-                
-                Debug.Log("AHHHH");
-            }
+
+            }*/
         }
         
+    }
+
+    void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Enemy") EnemyPresent = false;
     }
 }

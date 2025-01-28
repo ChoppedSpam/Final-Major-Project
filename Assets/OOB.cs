@@ -20,11 +20,11 @@ public class OOB : MonoBehaviour
         
     }
 
-    void OnCollisionStay2D(Collision2D collision)
+    void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "Enemy")
         {
-            EnemyOutofBounds = false;
+            EnemyOutofBounds = true;
         }
         
     }
@@ -33,7 +33,7 @@ public class OOB : MonoBehaviour
     {
         if (collision.gameObject.tag == "Enemy")
         {
-            EnemyOutofBounds = true;
+            EnemyOutofBounds = false;
         }
 
     }
