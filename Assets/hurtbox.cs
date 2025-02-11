@@ -51,8 +51,8 @@ public class hurtbox : MonoBehaviour
 
         early = (Conductor.GetComponent<Conductor>().BeatRounded - 0.5f);
         late = (Conductor.GetComponent<Conductor>().BeatRounded - 0.4f);
-        latemiss = (Conductor.GetComponent<Conductor>().BeatRounded - 0.7f);
-        earlymiss = (Conductor.GetComponent<Conductor>().BeatRounded - 0.3f);
+        /*latemiss = (Conductor.GetComponent<Conductor>().BeatRounded - 0.3f);
+        earlymiss = (Conductor.GetComponent<Conductor>().BeatRounded - 0.6f);*/
 
 
 
@@ -85,7 +85,7 @@ public class hurtbox : MonoBehaviour
                 
             }
 
-            if(timepressed <= earlymiss)
+            /*if(timepressed <= earlymiss)
             {
                 Player.GetComponent<test>().miss++;
             }
@@ -93,7 +93,7 @@ public class hurtbox : MonoBehaviour
             if (timepressed >= latemiss)
             {
                 Player.GetComponent<test>().miss++;
-            }
+            }*/
 
             if (enemyhealth <= 0f)
             {
@@ -151,6 +151,7 @@ public class hurtbox : MonoBehaviour
         {
             Debug.Log("hit");
             counter = true;
+            
         }
     }
 

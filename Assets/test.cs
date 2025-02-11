@@ -10,6 +10,7 @@ public class test : MonoBehaviour
     public TMP_Text HitsPerfect;
     public TMP_Text Miss;
     public TMP_Text Score;
+    public TMP_Text Combo;
 
 
     public int hitearly;
@@ -17,6 +18,8 @@ public class test : MonoBehaviour
     public int hitlate;
     public int miss;
     public int score;
+    public int oldscore;
+    public int combo;
 
     public GameObject htbox1;
     //public GameObject htbox2;
@@ -56,6 +59,8 @@ public class test : MonoBehaviour
         Hitslate.text = hitlate.ToString();
         HitsPerfect.text = hitperfect.ToString();
         Score.text = score.ToString();
+        Miss.text = miss.ToString();
+        Combo.text = combo.ToString();
 
         htboxtimer += Time.deltaTime;
 
@@ -104,10 +109,27 @@ public class test : MonoBehaviour
         {
             htboxtimer = 0;
             htbox1.SetActive(true);
+            oldscore = score;
         }
 
         if (htboxtimer > 0.2f)
         {
+            if(score == oldscore && score != 0)
+            {
+                miss++;
+                combo = 0;
+                oldscore = 0;
+                htboxtimer = 0;
+                htbox1.SetActive(false);
+            }
+            else if (oldscore !=0)
+            {
+                combo++;
+                oldscore = 0;
+                htboxtimer = 0;
+                htbox1.SetActive(false); 
+            }
+            
             htbox1.SetActive(false);
         }
     }
