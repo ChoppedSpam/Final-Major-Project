@@ -14,8 +14,11 @@ public class hurtbox : MonoBehaviour
     public GameObject OOBTracker;
     public GameObject Enemy;
     public GameObject EnemyHealthSlider;
+    public GameObject PlayerHealthSlider;
     public float enemyhealth = 100;
+    public float playerhealth = 100;
     public float step = 1f;
+    public float mult = 1f;
 
     public float late;
     public float early;
@@ -33,12 +36,16 @@ public class hurtbox : MonoBehaviour
     public Transform thispos;
     void Start()
     {
+        playerhealth = 100f;
         enemyhealth = 100f;  
     }
 
     // Update is called once per frame
     void Update()
     {
+
+
+
         if (EnemyTracker.GetComponent<EnemyTracker>().EnemyPresent == false && OOBTracker.GetComponent<OOB>().EnemyOutofBounds == true)
         {
             Debug.Log("Reset");
@@ -48,6 +55,7 @@ public class hurtbox : MonoBehaviour
         }
 
         EnemyHealthSlider.GetComponent<Slider>().value = enemyhealth * 0.01f;
+        PlayerHealthSlider.GetComponent<Slider>().value = playerhealth * 0.01f;
 
         early = (Conductor.GetComponent<Conductor>().BeatRounded - 0.5f);
         late = (Conductor.GetComponent<Conductor>().BeatRounded - 0.4f);
@@ -63,7 +71,7 @@ public class hurtbox : MonoBehaviour
             if (timepressed < early)
             {
                 Player.GetComponent<test>().hitearly++;
-                Player.GetComponent<test>().score = Player.GetComponent<test>().score + 100;
+                Player.GetComponent<test>().score = Player.GetComponent<test>().score + (100 * mult);
                 enemyhealth = enemyhealth - 10f;
                 counter = false;
                 
@@ -71,7 +79,7 @@ public class hurtbox : MonoBehaviour
             else if (timepressed > late)
             {
                 Player.GetComponent<test>().hitlate++;
-                Player.GetComponent<test>().score = Player.GetComponent<test>().score + 100;
+                Player.GetComponent<test>().score = Player.GetComponent<test>().score + (100* mult);
                 enemyhealth = enemyhealth - 10f;
                 counter = false;
                 
@@ -79,7 +87,7 @@ public class hurtbox : MonoBehaviour
             else
             {
                 Player.GetComponent<test>().hitperfect++;
-                Player.GetComponent<test>().score = Player.GetComponent<test>().score + 300;
+                Player.GetComponent<test>().score = Player.GetComponent<test>().score + (300 * mult);
                 enemyhealth = enemyhealth - 15f;
                 counter = false;
                 

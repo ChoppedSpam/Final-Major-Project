@@ -17,9 +17,10 @@ public class test : MonoBehaviour
     public int hitperfect;
     public int hitlate;
     public int miss;
-    public int score;
-    public int oldscore;
+    public float score;
+    public float oldscore;
     public int combo;
+    public int oldcombo;
 
     public GameObject htbox1;
     //public GameObject htbox2;
@@ -44,6 +45,7 @@ public class test : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        oldcombo = 0;
         htboxtimer = 2;
         rb = GetComponent<Rigidbody2D>();
         htbox1.SetActive(false);
@@ -53,11 +55,16 @@ public class test : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if(combo>= oldcombo+25)
+        {
+            htbox1.GetComponent<hurtbox>().mult = htbox1.GetComponent<hurtbox>().mult + .25f;
+            oldcombo = combo;
+        }
 
         Hits.text = hitearly.ToString();
         Hitslate.text = hitlate.ToString();
         HitsPerfect.text = hitperfect.ToString();
+        score = (int)score;
         Score.text = score.ToString();
         Miss.text = miss.ToString();
         Combo.text = combo.ToString();
@@ -105,7 +112,7 @@ public class test : MonoBehaviour
             rb.AddForce(new Vector2(0, 10), ForceMode2D.Impulse);
         }
         */
-        if (Input.GetKeyDown(KeyCode.E)&& htboxtimer >= 0.2f)
+        if (Input.GetKeyDown(KeyCode.E)&& htboxtimer >= 0.22f)
         {
             htboxtimer = 0;
             htbox1.SetActive(true);
@@ -117,6 +124,7 @@ public class test : MonoBehaviour
             if(score == oldscore && score != 0)
             {
                 miss++;
+                htbox1.GetComponent<hurtbox>().playerhealth = htbox1.GetComponent<hurtbox>().playerhealth - 10;
                 combo = 0;
                 oldscore = 0;
                 //htboxtimer = 0;
