@@ -105,7 +105,7 @@ public class test : MonoBehaviour
             rb.AddForce(new Vector2(0, 10), ForceMode2D.Impulse);
         }
         */
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.E)&& htboxtimer >= 0.2f)
         {
             htboxtimer = 0;
             htbox1.SetActive(true);
@@ -119,14 +119,14 @@ public class test : MonoBehaviour
                 miss++;
                 combo = 0;
                 oldscore = 0;
-                htboxtimer = 0;
+                //htboxtimer = 0;
                 htbox1.SetActive(false);
             }
             else if (oldscore !=0)
             {
                 combo++;
                 oldscore = 0;
-                htboxtimer = 0;
+                //htboxtimer = 0;
                 htbox1.SetActive(false); 
             }
             
