@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class Conductor : MonoBehaviour
 {
+    public Animator anim;
     public GameObject hurtbox;
     public GameObject player;
     public int[] beatstomiss;
@@ -96,7 +97,7 @@ public class Conductor : MonoBehaviour
             hitbox2.SetActive(false);
         }
 
-        if (offline != true)
+        /*if (offline != true)
         {
             if (even==false)
             {
@@ -111,7 +112,7 @@ public class Conductor : MonoBehaviour
                 oldscore = player.GetComponent<test>().score;
                 misscount = player.GetComponent<test>().miss;
             }
-        }
+        }*/
 
 
         //determine how many seconds since the song started
@@ -136,6 +137,7 @@ public class Conductor : MonoBehaviour
 
         if (even == true && offline == false)
         {
+            anim.Play("Startup");
             timer = timer + Time.deltaTime;
             hitbox1.SetActive(true);
             hitbox2.SetActive(false);
@@ -144,6 +146,7 @@ public class Conductor : MonoBehaviour
         
         if (even == false && offline == false)
         {
+            anim.Play("hit");
             hitbox1.SetActive(false);
             hitbox2.SetActive(true);
             timer = 0;

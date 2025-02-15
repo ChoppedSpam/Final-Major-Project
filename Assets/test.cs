@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class test : MonoBehaviour
 {
+    public Animator anim;
+
     public TMP_Text Hits;
     public TMP_Text Hitslate;
     public TMP_Text HitsPerfect;
@@ -114,6 +116,7 @@ public class test : MonoBehaviour
         */
         if (Input.GetKeyDown(KeyCode.E)&& htboxtimer >= 0.22f)
         {
+            anim.Play("Punch");
             htboxtimer = 0;
             htbox1.SetActive(true);
             oldscore = score;
