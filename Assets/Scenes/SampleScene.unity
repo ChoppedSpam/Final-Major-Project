@@ -1871,9 +1871,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hurtbox: {fileID: 168547460}
+  player: {fileID: 2002519427}
   beatstomiss: 01000000
   Early: 0.1
   Late: 0.1
+  oldscore: 0
+  misscount: 0
   timepressed: 0
   even: 0
   hitbox1: {fileID: 33078878}
@@ -1888,6 +1891,7 @@ MonoBehaviour:
   BeatRounded: 0
   BeatRoundedDown: 0
   offline: 0
+  timer: 0
 --- !u!82 &596796330
 AudioSource:
   m_ObjectHideFlags: 0

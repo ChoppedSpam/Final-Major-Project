@@ -6,6 +6,7 @@ using UnityEngine;
 public class Conductor : MonoBehaviour
 {
     public GameObject hurtbox;
+    public GameObject player;
     public int[] beatstomiss;
 
     [Range(0.1f, 0.4f)]
@@ -14,6 +15,8 @@ public class Conductor : MonoBehaviour
     [Range(0.1f, 0.4f)]
     public float Late;
 
+    public float oldscore;
+    public int misscount;
 
     public float timepressed;
 
@@ -47,11 +50,13 @@ public class Conductor : MonoBehaviour
 
     public bool offline = false;
 
+    public float timer;
+
 
     // Start is called before the first frame update
     void Start()
     {
-
+        
 
         //Load the AudioSource attached to the Conductor GameObject
         musicSource = GetComponent<AudioSource>();
@@ -91,6 +96,23 @@ public class Conductor : MonoBehaviour
             hitbox2.SetActive(false);
         }
 
+        if (offline != true)
+        {
+            if (even==false)
+            {
+                if (oldscore != player.GetComponent<test>().score && misscount == player.GetComponent<test>().miss)
+                {
+                    player.GetComponent<test>().miss++;
+                }
+            }
+            else
+            {
+                
+                oldscore = player.GetComponent<test>().score;
+                misscount = player.GetComponent<test>().miss;
+            }
+        }
+
 
         //determine how many seconds since the song started
         songPosition = (float)(AudioSettings.dspTime - dspSongTime);
@@ -114,7 +136,7 @@ public class Conductor : MonoBehaviour
 
         if (even == true && offline == false)
         {
-            
+            timer = timer + Time.deltaTime;
             hitbox1.SetActive(true);
             hitbox2.SetActive(false);
             
@@ -124,6 +146,7 @@ public class Conductor : MonoBehaviour
         {
             hitbox1.SetActive(false);
             hitbox2.SetActive(true);
+            timer = 0;
         }
 
         if (Input.GetKeyDown(KeyCode.E))
