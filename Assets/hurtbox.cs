@@ -37,7 +37,7 @@ public class hurtbox : MonoBehaviour
     void Start()
     {
         playerhealth = 100f;
-        enemyhealth = 100f;  
+        enemyhealth = 100f;
     }
 
     // Update is called once per frame
@@ -57,8 +57,8 @@ public class hurtbox : MonoBehaviour
         EnemyHealthSlider.GetComponent<Slider>().value = enemyhealth * 0.01f;
         PlayerHealthSlider.GetComponent<Slider>().value = playerhealth * 0.01f;
 
-        early = (Conductor.GetComponent<Conductor>().BeatRounded - 0.5f);
-        late = (Conductor.GetComponent<Conductor>().BeatRounded - 0.4f);
+        early = (Conductor.GetComponent<Conductor>().BeatRounded - 0.75f);
+        late = (Conductor.GetComponent<Conductor>().BeatRounded - 0.3f);
         /*latemiss = (Conductor.GetComponent<Conductor>().BeatRounded - 0.3f);
         earlymiss = (Conductor.GetComponent<Conductor>().BeatRounded - 0.6f);*/
 
@@ -74,15 +74,15 @@ public class hurtbox : MonoBehaviour
                 Player.GetComponent<test>().score = Player.GetComponent<test>().score + (100 * mult);
                 enemyhealth = enemyhealth - 10f;
                 counter = false;
-                
+
             }
             else if (timepressed > late)
             {
                 Player.GetComponent<test>().hitlate++;
-                Player.GetComponent<test>().score = Player.GetComponent<test>().score + (100* mult);
+                Player.GetComponent<test>().score = Player.GetComponent<test>().score + (100 * mult);
                 enemyhealth = enemyhealth - 10f;
                 counter = false;
-                
+
             }
             else
             {
@@ -90,7 +90,7 @@ public class hurtbox : MonoBehaviour
                 Player.GetComponent<test>().score = Player.GetComponent<test>().score + (300 * mult);
                 enemyhealth = enemyhealth - 15f;
                 counter = false;
-                
+
             }
 
             /*if(timepressed <= earlymiss)
@@ -113,7 +113,7 @@ public class hurtbox : MonoBehaviour
                 EnemyHealthSlider.SetActive(true);
             }
 
-            
+
 
             /*if (timepressed > (Conductor.GetComponent<Conductor>().songPositionInBeats - 0.1f) && timepressed < (Conductor.GetComponent<Conductor>().songPositionInBeats + 0.1f))
             {
@@ -159,13 +159,13 @@ public class hurtbox : MonoBehaviour
         {
             Debug.Log("hit");
             counter = true;
-            
+
         }
     }
 
     public void ResetEnemy()
     {
-        Enemy.GetComponent<Rigidbody2D>().AddForce(new Vector2(70, 70), ForceMode2D.Impulse); 
+        Enemy.GetComponent<Rigidbody2D>().AddForce(new Vector2(70, 70), ForceMode2D.Impulse);
     }
 
     /*private void OnCollisionEnter2D(Collision2D collision)

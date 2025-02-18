@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 
 public class Conductor : MonoBehaviour
 {
@@ -9,40 +10,26 @@ public class Conductor : MonoBehaviour
     public GameObject hurtbox;
     public GameObject player;
     public int[] beatstomiss;
+    public int[] SecondHit;
 
     [Range(0.1f, 0.4f)]
     public float Early;
-
     [Range(0.1f, 0.4f)]
     public float Late;
 
     public float oldscore;
     public int misscount;
-
     public float timepressed;
-
     public bool even;
-
+    public bool SecondHitAct = false;
     public GameObject hitbox1;
     public GameObject hitbox2;
 
-    //Song beats per minute
-    //This is determined by the song you're trying to sync up to
     public float songBpm;
-
-    //The number of seconds for each song beat
     public float secPerBeat;
-
-    //Current song position, in seconds
     public float songPosition;
-
-    //Current song position, in beats
     public float songPositionInBeats;
-
-    //How many seconds have passed since the song started
     public float dspSongTime;
-
-    //an AudioSource attached to this GameObject that will play the music.
     public AudioSource musicSource;
 
     public float currentBeat;
@@ -50,43 +37,62 @@ public class Conductor : MonoBehaviour
     public float BeatRoundedDown;
 
     public bool offline = false;
-
     public float timer;
 
+    private bool isAttacking = false;
+    private float lastBeat = -1; // Keeps track of last processed beat
 
-    // Start is called before the first frame update
     void Start()
     {
-        
-
-        //Load the AudioSource attached to the Conductor GameObject
         musicSource = GetComponent<AudioSource>();
-
-        //Calculate the number of seconds in each beat
         secPerBeat = 60f / songBpm;
-
-        //Record the time when the music starts
         dspSongTime = (float)AudioSettings.dspTime;
-
-        //Start the music
         musicSource.Play();
-
     }
 
-    // Update is called once per frame
     void Update()
     {
+        if (Input.GetKey(KeyCode.E))
+        {
+            timepressed = songPositionInBeats;
+        }
+
+        SecondHitAct = false;
         offline = false;
+
+        songPosition = (float)(AudioSettings.dspTime - dspSongTime);
+        songPositionInBeats = songPosition / secPerBeat;
+        currentBeat = songPositionInBeats;
+        BeatRounded = Mathf.CeilToInt(currentBeat);
+        BeatRoundedDown = Mathf.FloorToInt(currentBeat);
+
+        even = (BeatRounded % 2 == 0);
+
+        // If it's the same beat as last frame, do nothing to prevent retriggering
+        if (BeatRounded == lastBeat)
+            return;
+
+        lastBeat = BeatRounded; // Update last processed beat
+
+        
 
         foreach (var item in beatstomiss)
         {
-            //offline = false;
-
             if (item == BeatRounded)
             {
                 offline = true;
                 hitbox1.SetActive(false);
                 hitbox2.SetActive(false);
+                return; // Skip attack logic if offline
+            }
+        }
+
+        foreach (var item in SecondHit)
+        {
+            if (item == BeatRounded)
+            {
+                SecondHitAct = true;
+                break;
             }
         }
 
@@ -95,66 +101,55 @@ public class Conductor : MonoBehaviour
             offline = true;
             hitbox1.SetActive(false);
             hitbox2.SetActive(false);
+            return;
         }
 
-        /*if (offline != true)
+        // **Only allow attacks when a new beat is detected**
+        if (!isAttacking)
         {
-            if (even==false)
+            isAttacking = true; // Lock attack state
+
+            if (SecondHitAct) // Variation attack
             {
-                if (oldscore != player.GetComponent<test>().score && misscount == player.GetComponent<test>().miss)
+                if (even)
                 {
-                    player.GetComponent<test>().miss++;
+                    anim.Play("SecondHitStart");
+                    StartCoroutine(HitboxTiming(hitbox2, 0.1f, 0.4f));
+                }
+                else
+                {
+                    anim.Play("SecondHit");
+                    StartCoroutine(HitboxTiming(hitbox2, 0.1f, 0.4f));
                 }
             }
-            else
+            else // Normal attack
             {
-                
-                oldscore = player.GetComponent<test>().score;
-                misscount = player.GetComponent<test>().miss;
+                if (even)
+                {
+                    anim.Play("Startup");
+                }
+                else
+                {
+                    anim.Play("hit");
+                    StartCoroutine(HitboxTiming(hitbox2, 0.1f, 0.4f));
+                }
             }
-        }*/
 
-
-        //determine how many seconds since the song started
-        songPosition = (float)(AudioSettings.dspTime - dspSongTime);
-
-        //determine how many beats since the song started
-        songPositionInBeats = songPosition / secPerBeat;
-
-        currentBeat = songPositionInBeats;
-        BeatRounded = Mathf.CeilToInt(currentBeat);
-        BeatRoundedDown = Mathf.FloorToInt(currentBeat);
-
-        if (BeatRounded%2 == 0)
-        {
-            even = true;
+            StartCoroutine(ResetAttackFlag(secPerBeat * 0.8f)); // Ensure attack doesn't retrigger too quickly
         }
-        else
-        {
-            even = false;
-        }
+    }
 
+    IEnumerator HitboxTiming(GameObject hitbox, float delayBefore, float activeTime)
+    {
+        yield return new WaitForSeconds(delayBefore);
+        hitbox.SetActive(true);
+        yield return new WaitForSeconds(activeTime);
+        hitbox.SetActive(false);
+    }
 
-        if (even == true && offline == false)
-        {
-            anim.Play("Startup");
-            timer = timer + Time.deltaTime;
-            hitbox1.SetActive(true);
-            hitbox2.SetActive(false);
-            
-        }
-        
-        if (even == false && offline == false)
-        {
-            anim.Play("hit");
-            hitbox1.SetActive(false);
-            hitbox2.SetActive(true);
-            timer = 0;
-        }
-
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            timepressed = songPositionInBeats;
-        }
+    IEnumerator ResetAttackFlag(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        isAttacking = false; // Allow new attack after the delay
     }
 }
