@@ -851,8 +851,8 @@ MonoBehaviour:
   Enemy: {fileID: 2055749617}
   EnemyHealthSlider: {fileID: 411970563}
   PlayerHealthSlider: {fileID: 2042378304}
-  enemyhealth: 0.01
-  playerhealth: 100
+  enemyhealth: 0.1
+  playerhealth: 0.1
   step: 1
   mult: 1
   late: 0
@@ -1032,7 +1032,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -558, y: -472}
+  m_AnchoredPosition: {x: -578.9, y: -472}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &206145530
@@ -2483,8 +2483,8 @@ MonoBehaviour:
   anim: {fileID: 484990715}
   hurtbox: {fileID: 168547460}
   player: {fileID: 2002519427}
-  beatstomiss: 01000000
-  SecondHit: 020000000300000004000000050000000a0000000b0000000c0000000d0000000e000000
+  beatstomiss: ffffffff00000000010000000200000003000000040000000500000006000000
+  SecondHit: 160000001700000018000000190000001a000000200000002100000022000000
   Early: 0.1
   Late: 0.1
   oldscore: 0
@@ -2784,8 +2784,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -723.2965, y: -461.55206}
-  m_SizeDelta: {x: 914.63745, y: 96.12903}
+  m_AnchoredPosition: {x: -727.00946, y: -461.55206}
+  m_SizeDelta: {x: 897.2546, y: 96.129}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &792954622
 MonoBehaviour:

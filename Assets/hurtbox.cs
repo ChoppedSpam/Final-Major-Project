@@ -37,19 +37,19 @@ public class hurtbox : MonoBehaviour
     void Start()
     {
         playerhealth = 100f;
-        enemyhealth = 100f;
+        enemyhealth = 100;
     }
 
     // Update is called once per frame
     void Update()
     {
 
-
+        
 
         if (EnemyTracker.GetComponent<EnemyTracker>().EnemyPresent == false && OOBTracker.GetComponent<OOB>().EnemyOutofBounds == true)
         {
             Debug.Log("Reset");
-            enemyhealth = 100f;
+            enemyhealth = 100;
             //Enemy.transform.position = Vector3.MoveTowards(transform.position, thispos.position, step);
             Enemy.transform.position = thispos.position;
         }
@@ -72,7 +72,7 @@ public class hurtbox : MonoBehaviour
             {
                 Player.GetComponent<test>().hitearly++;
                 Player.GetComponent<test>().score = Player.GetComponent<test>().score + (100 * mult);
-                enemyhealth = enemyhealth - 10f;
+                enemyhealth = enemyhealth - 1;
                 counter = false;
 
             }
@@ -80,7 +80,7 @@ public class hurtbox : MonoBehaviour
             {
                 Player.GetComponent<test>().hitlate++;
                 Player.GetComponent<test>().score = Player.GetComponent<test>().score + (100 * mult);
-                enemyhealth = enemyhealth - 10f;
+                enemyhealth = enemyhealth - 1;
                 counter = false;
 
             }
@@ -88,7 +88,7 @@ public class hurtbox : MonoBehaviour
             {
                 Player.GetComponent<test>().hitperfect++;
                 Player.GetComponent<test>().score = Player.GetComponent<test>().score + (300 * mult);
-                enemyhealth = enemyhealth - 15f;
+                enemyhealth = enemyhealth - 5;
                 counter = false;
 
             }
