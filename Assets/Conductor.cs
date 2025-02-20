@@ -39,8 +39,8 @@ public class Conductor : MonoBehaviour
     public bool offline = false;
     public float timer;
 
-    private bool isAttacking = false;
-    private float lastBeat = -1; // Keeps track of last processed beat
+    public bool isAttacking = false;
+    public float lastBeat = -1; // Keeps track of last processed beat
 
     void Start()
     {

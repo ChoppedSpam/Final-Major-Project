@@ -25,9 +25,11 @@ public class test : MonoBehaviour
     public int oldcombo;
 
     public GameObject htbox1;
+    public GameObject htbox2;
     public GameObject Player;
 
     public float htboxtimer = 0;
+    public float htboxtimer2 = 0;
     public float htboxstartup = 0;
 
     public float htboxstun;
@@ -48,6 +50,7 @@ public class test : MonoBehaviour
         htboxtimer = 2;
         rb = GetComponent<Rigidbody2D>();
         htbox1.SetActive(false);
+        htbox2.SetActive(false);
 
         // Get CameraShake component from the main camera
         cameraShake = Camera.main.GetComponent<CameraShake>();
@@ -84,6 +87,7 @@ public class test : MonoBehaviour
         AccuracyText.text = $"{accuracy:F2}%"; // Display accuracy with 2 decimal places
 
         htboxtimer += Time.deltaTime;
+        htboxtimer2 += Time.deltaTime;
 
 
         // Attack input
@@ -92,6 +96,14 @@ public class test : MonoBehaviour
             anim.Play("Punch");
             htboxtimer = 0;
             htbox1.SetActive(true);
+            oldscore = score;
+        }
+
+        if (Input.GetKeyDown(KeyCode.W) && htboxtimer2 >= 0.11f)
+        {
+            anim.Play("Guard");
+            htboxtimer2 = 0;
+            htbox2.SetActive(true);
             oldscore = score;
         }
 
@@ -120,6 +132,12 @@ public class test : MonoBehaviour
             }
 
             htbox1.SetActive(false);
+        }
+
+        if (htboxtimer2 > 0.11f)
+        {
+            
+            htbox2.SetActive(false);
         }
     }
 }
