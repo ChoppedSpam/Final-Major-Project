@@ -42,6 +42,8 @@ public class Conductor : MonoBehaviour
     public bool isAttacking = false;
     public float lastBeat = -1; // Keeps track of last processed beat
 
+    public float stunduration = 0f;
+
     void Start()
     {
         musicSource = GetComponent<AudioSource>();
@@ -52,6 +54,8 @@ public class Conductor : MonoBehaviour
 
     void Update()
     {
+        stunduration += Time.deltaTime;
+
         if (Input.GetKey(KeyCode.E))
         {
             timepressed = songPositionInBeats;
@@ -105,7 +109,7 @@ public class Conductor : MonoBehaviour
         }
 
         // **Only allow attacks when a new beat is detected**
-        if (!isAttacking)
+        if (!isAttacking /*&& !anim.GetCurrentAnimatorStateInfo(0).IsName("blocked")*/)
         {
             isAttacking = true; // Lock attack state
 
@@ -124,13 +128,13 @@ public class Conductor : MonoBehaviour
             }
             else // Normal attack
             {
-                if (even)
+                if (even )
                 {
-                    anim.Play("Startup");
+                    anim.Play("Startup1");
                 }
                 else
                 {
-                    anim.Play("hit");
+                    anim.Play("hit1");
                     StartCoroutine(HitboxTiming(hitbox2, 0.1f, 0.4f));
                 }
             }

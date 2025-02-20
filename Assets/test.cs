@@ -27,6 +27,7 @@ public class test : MonoBehaviour
     public GameObject htbox1;
     public GameObject htbox2;
     public GameObject Player;
+    public GameObject conductor;
 
     public float htboxtimer = 0;
     public float htboxtimer2 = 0;
@@ -104,8 +105,9 @@ public class test : MonoBehaviour
             anim.Play("Guard");
             htboxtimer2 = 0;
             htbox2.SetActive(true);
-            oldscore = score;
         }
+
+
 
         // Check if attack missed or landed
         if (htboxtimer > 0.2f)
@@ -124,6 +126,8 @@ public class test : MonoBehaviour
                 oldscore = 0;
                 htbox1.SetActive(false);
 
+                conductor.GetComponent<Conductor>().anim.Play("blocked");
+
                 // **Trigger Camera Shake on a successful hit**
                 if (cameraShake != null)
                 {
@@ -136,8 +140,17 @@ public class test : MonoBehaviour
 
         if (htboxtimer2 > 0.11f)
         {
-            
             htbox2.SetActive(false);
+        }
+
+        if (htbox2.GetComponent<TestParry>().guardcounter && Input.GetKeyDown(KeyCode.E))
+        {
+            
+            htbox2.GetComponent<TestParry>().guardcounter = false;
+            conductor.GetComponent<Conductor>().stunduration = 0;
+            Debug.Log("Player attacks stunned enemy!");
+            score += 500; // **Bonus points for attacking stunned enemy**
+            combo += 5; // **Increase combo**
         }
     }
 }
