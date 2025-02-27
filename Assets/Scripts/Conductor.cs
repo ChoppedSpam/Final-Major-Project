@@ -109,7 +109,7 @@ public class Conductor : MonoBehaviour
         }
 
         // **Only allow attacks when a new beat is detected**
-        if (!isAttacking /*&& !anim.GetCurrentAnimatorStateInfo(0).IsName("blocked")*/)
+        if (!isAttacking && !anim.GetCurrentAnimatorStateInfo(0).IsName("blocked"))
         {
             isAttacking = true; // Lock attack state
 
@@ -135,6 +135,7 @@ public class Conductor : MonoBehaviour
                 else
                 {
                     anim.Play("hit1");
+
                     StartCoroutine(HitboxTiming(hitbox2, 0.1f, 0.4f));
                 }
             }

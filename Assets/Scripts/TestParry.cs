@@ -29,11 +29,11 @@ public class TestParry : MonoBehaviour
 
         if (guardcounter)
         {
+
+
             
 
-            Enemy.GetComponent<Conductor>().anim.Play("Idle");
-
-            if(Enemy.GetComponent<Conductor>().hitbox1.activeSelf)
+            if (Enemy.GetComponent<Conductor>().hitbox1.activeSelf)
             {
                 Enemy.GetComponent<Conductor>().hitbox1.SetActive(true);
             }
@@ -52,6 +52,7 @@ public class TestParry : MonoBehaviour
     {
         if (collision.gameObject.tag == "Hit" && guardcounter == false)
         {
+            Enemy.GetComponent<Conductor>().anim.Play("blocked");
             Debug.Log("hit");
             Enemy.GetComponent<Conductor>().stunduration = 0f;
             guardcounter = true;

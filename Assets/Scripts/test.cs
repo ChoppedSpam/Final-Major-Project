@@ -82,7 +82,7 @@ public class test : MonoBehaviour
         if (totalHits > 0)
         {
             float weightedHits = (hitperfect * 100f) + (hitearly * 50f) + (hitlate * 50f); // Perfect = 100%, Early/Late = 50%
-            accuracy = weightedHits / totalHits; // Normalize to percentage
+            accuracy = weightedHits / totalHits; 
         }
 
         AccuracyText.text = $"{accuracy:F2}%"; // Display accuracy with 2 decimal places
@@ -145,12 +145,16 @@ public class test : MonoBehaviour
 
         if (htbox2.GetComponent<TestParry>().guardcounter && Input.GetKeyDown(KeyCode.E))
         {
-            
+            if (cameraShake != null)
+            {
+                cameraShake.ShakeCamera(0.05f, 0.05f);
+            }
+            conductor.GetComponent<Conductor>().anim.Play("blocked");
             htbox2.GetComponent<TestParry>().guardcounter = false;
             conductor.GetComponent<Conductor>().stunduration = 0;
             Debug.Log("Player attacks stunned enemy!");
             score += 500; // **Bonus points for attacking stunned enemy**
-            combo += 5; // **Increase combo**
+            combo += 1; // **Increase combo**
         }
     }
 }
