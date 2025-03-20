@@ -6,6 +6,8 @@ using UnityEngine.SocialPlatforms.Impl;
 
 public class Conductor : MonoBehaviour
 {
+    public GameObject StarStunBox;
+
     public Animator anim;
     public GameObject hurtbox;
     public GameObject player;
@@ -54,11 +56,30 @@ public class Conductor : MonoBehaviour
 
     void Update()
     {
+        /*if(currentBeat >= BeatRounded - 0.175f)
+        {
+            StarStunBox.SetActive(true);
+        }
+        else
+        {
+            StarStunBox.SetActive(false);
+        }*/
+
+
         stunduration += Time.deltaTime;
 
         if (Input.GetKey(KeyCode.E))
         {
             timepressed = songPositionInBeats;
+        }
+
+        if (!isAttacking)
+        {
+            offline = true;
+        }
+        else
+        {
+            offline = false;
         }
 
         SecondHitAct = false;
@@ -157,4 +178,6 @@ public class Conductor : MonoBehaviour
         yield return new WaitForSeconds(delay);
         isAttacking = false; // Allow new attack after the delay
     }
+
+
 }
