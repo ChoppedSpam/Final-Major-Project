@@ -957,6 +957,7 @@ MonoBehaviour:
   Enemy: {fileID: 2055749617}
   EnemyHealthSlider: {fileID: 411970563}
   PlayerHealthSlider: {fileID: 2042378304}
+  HitVFXPrefab: {fileID: 8128979217786619732, guid: 687ded3caddcd0f45aa70e3dc19fd598, type: 3}
   enemyhealth: 0.1
   playerhealth: 0.1
   step: 1
@@ -2586,6 +2587,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8477b8d29d07424aa932a54ff9d1cc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  StarStunBox: {fileID: 0}
   anim: {fileID: 737835439}
   hurtbox: {fileID: 168547460}
   player: {fileID: 2002519427}
@@ -5835,7 +5837,7 @@ Transform:
   m_GameObject: {fileID: 2055749617}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.94, y: -1.09, z: 0}
+  m_LocalPosition: {x: 1.99, y: -1.09, z: 0}
   m_LocalScale: {x: 2.0185, y: 4.6574, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

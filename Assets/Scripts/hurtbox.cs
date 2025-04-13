@@ -15,6 +15,7 @@ public class hurtbox : MonoBehaviour
     public GameObject Enemy;
     public GameObject EnemyHealthSlider;
     public GameObject PlayerHealthSlider;
+    public GameObject HitVFXPrefab;
     public float enemyhealth = 100;
     public float playerhealth = 100;
     public float step = 1f;
@@ -62,7 +63,7 @@ public class hurtbox : MonoBehaviour
         /*latemiss = (Conductor.GetComponent<Conductor>().BeatRounded - 0.3f);
         earlymiss = (Conductor.GetComponent<Conductor>().BeatRounded - 0.6f);*/
 
-
+        Vector3 enemyPos = Enemy.transform.position + new Vector3(0.75f, 1.5f, 0);
 
         timepressed = Conductor.GetComponent<Conductor>().timepressed;
 
@@ -70,6 +71,8 @@ public class hurtbox : MonoBehaviour
         {
             if (timepressed < early)
             {
+
+                StartCoroutine(PlayHitVFX(Enemy.transform.position));
                 Player.GetComponent<test>().hitearly++;
                 Player.GetComponent<test>().score = Player.GetComponent<test>().score + (100 * mult);
                 enemyhealth = enemyhealth - 1;
@@ -78,6 +81,7 @@ public class hurtbox : MonoBehaviour
             }
             else if (timepressed > late)
             {
+                StartCoroutine(PlayHitVFX(Enemy.transform.position));
                 Player.GetComponent<test>().hitlate++;
                 Player.GetComponent<test>().score = Player.GetComponent<test>().score + (100 * mult);
                 enemyhealth = enemyhealth - 1;
@@ -86,6 +90,7 @@ public class hurtbox : MonoBehaviour
             }
             else
             {
+                StartCoroutine(PlayHitVFX(Enemy.transform.position));
                 Player.GetComponent<test>().hitperfect++;
                 Player.GetComponent<test>().score = Player.GetComponent<test>().score + (300 * mult);
                 enemyhealth = enemyhealth - 5;
@@ -166,6 +171,12 @@ public class hurtbox : MonoBehaviour
     public void ResetEnemy()
     {
         Enemy.GetComponent<Rigidbody2D>().AddForce(new Vector2(70, 70), ForceMode2D.Impulse);
+    }
+    IEnumerator PlayHitVFX(Vector3 enemyPos)
+    {
+        yield return new WaitForSeconds(0.1f);
+        GameObject vfx = Instantiate(HitVFXPrefab, enemyPos + Vector3.up * 1.5f, Quaternion.identity);
+        Destroy(vfx, 0.12f);
     }
 
     /*private void OnCollisionEnter2D(Collision2D collision)
