@@ -6,7 +6,7 @@ public class hurtbox : MonoBehaviour
 {
     private bool isReacting = false;
     private bool reactionQueued = false;
-    public Transform starSpawnPoint;
+    
 
     public GameObject Enemy;
     public Animator EnemyAnims;
@@ -91,7 +91,7 @@ public class hurtbox : MonoBehaviour
         }
     }
 
-    IEnumerator PlayHitReaction()
+    /*IEnumerator PlayHitReaction()
     {
         if (isReacting)
         {
@@ -144,5 +144,5 @@ public class hurtbox : MonoBehaviour
 
             Destroy(star, 1.5f);
         }
-    }
+    }*/
 }
