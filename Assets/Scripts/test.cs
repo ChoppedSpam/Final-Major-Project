@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class test : MonoBehaviour
 {
+    public float inputOffset = 0.07f;
+    public float timingDiff;
     public float timepressed = -1f;
 
     public Animator anim;
@@ -96,11 +98,16 @@ public class test : MonoBehaviour
         // Attack input
         if (Input.GetKeyDown(KeyCode.E) && htboxtimer >= 0.22f)
         {
-            anim.Play("Punch");
+            float currentBeat = conductor.GetComponent<Conductor>().GetSongBeatPosition();
+            timepressed = currentBeat + inputOffset;
 
-            timepressed = conductor.GetComponent<Conductor>().GetSongBeatPosition();
-            htboxtimer = 0; 
+            // Compare to the actual beat immediately
+            timingDiff = currentBeat - Mathf.Round(currentBeat); // how far off from the closest full beat
+
+            anim.Play("Punch");
+            htboxtimer = 0;
             htbox1.SetActive(true);
+            StartCoroutine(DisableHitboxAfterDelay(htbox1, 0.2f));
             oldscore = score;
         }
 
@@ -161,5 +168,11 @@ public class test : MonoBehaviour
             score += 500; // **Bonus points for attacking stunned enemy**
             combo += 1; // **Increase combo**
         }
+    }
+
+    IEnumerator DisableHitboxAfterDelay(GameObject obj, float time)
+    {
+        yield return new WaitForSeconds(time);
+        obj.SetActive(false);
     }
 }

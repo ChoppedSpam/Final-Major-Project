@@ -952,7 +952,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e58d73c11aa3da458d05e70dd1bb763, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  starSpawnPoint: {fileID: 784744589}
   Enemy: {fileID: 2055749617}
   EnemyAnims: {fileID: 737835439}
   EnemyHealthSlider: {fileID: 411970563}
@@ -5521,6 +5520,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 121b14504a3092d4b9e9b6aa6bc3ee03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inputOffset: 0.02
+  timingDiff: 0
+  timepressed: 0
   anim: {fileID: 122904326}
   Hits: {fileID: 811597383}
   Hitslate: {fileID: 118512436}

@@ -82,7 +82,7 @@ public class Conductor : MonoBehaviour
 
     IEnumerator ActivateHitbox()
     {
-        yield return new WaitForSeconds(0.1f); // delay before hitbox appears
+        yield return new WaitForSeconds(0.2f); // delay before hitbox appears
         hitbox1.SetActive(true);
         yield return new WaitForSeconds(0.3f); // active time
         hitbox1.SetActive(false);
