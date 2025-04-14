@@ -42,33 +42,45 @@ public class hurtbox : MonoBehaviour
         {
             counter = false;
 
-            timepressed = Player.GetComponent<test>().htboxtimer;
+            timepressed = Player.GetComponent<test>().timepressed;
             GameObject htbox1 = Player.GetComponent<test>().htbox1;
             GameObject htbox2 = Player.GetComponent<test>().htbox2;
 
             if (htbox1.activeSelf == true || htbox2.activeSelf == true)
             {
-                if (timepressed < early)
+                // Get latest beat position
+                float currentBeat = Conductor.GetComponent<Conductor>().GetSongBeatPosition();
+                float diff = timepressed - currentBeat;
+
+                Debug.Log($"[Timing Check] Pressed: {timepressed}, Current: {currentBeat}, Diff: {diff}");
+
+                // Define your timing windows
+                float perfectWindow = 0.08f;
+                float graceWindow = 0.18f;
+
+                if (Mathf.Abs(diff) <= perfectWindow)
                 {
-                    Player.GetComponent<test>().hitearly++;
-                    Player.GetComponent<test>().score += 100 * mult;
-                    enemyhealth -= 1;
                     Conductor.GetComponent<Conductor>().StartHitReaction();
-                }
-                else if (timepressed > late)
-                {
-                    Player.GetComponent<test>().hitlate++;
-                    Player.GetComponent<test>().score += 100 * mult;
-                    enemyhealth -= 1;
-                    Conductor.GetComponent<Conductor>().StartHitReaction();
-                }
-                else
-                {
                     Player.GetComponent<test>().hitperfect++;
                     Player.GetComponent<test>().score += 300 * mult;
                     enemyhealth -= 5;
-                    Conductor.GetComponent<Conductor>().StartHitReaction();
                 }
+                else if (Mathf.Abs(diff) <= graceWindow)
+                {
+                    Conductor.GetComponent<Conductor>().StartHitReaction();
+                    if (diff < 0)
+                        Player.GetComponent<test>().hitearly++;
+                    else
+                        Player.GetComponent<test>().hitlate++;
+
+                    Player.GetComponent<test>().score += 100 * mult;
+                    enemyhealth -= 1;
+                }
+                else
+                {
+                    Player.GetComponent<test>().miss++;
+                }
+
 
                 Vector3 vfxPos = Enemy.transform.position + new Vector3(0, 1.5f, 0);
                 GameObject vfx = Instantiate(HitVFXPrefab, vfxPos, Quaternion.identity);

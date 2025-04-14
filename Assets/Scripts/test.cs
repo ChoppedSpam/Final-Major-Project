@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class test : MonoBehaviour
 {
+    public float timepressed = -1f;
+
     public Animator anim;
 
     public TMP_Text Hits;
@@ -95,10 +97,13 @@ public class test : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.E) && htboxtimer >= 0.22f)
         {
             anim.Play("Punch");
-            htboxtimer = 0;
+
+            timepressed = conductor.GetComponent<Conductor>().GetSongBeatPosition();
+            htboxtimer = 0; 
             htbox1.SetActive(true);
             oldscore = score;
         }
+
 
         if (Input.GetKeyDown(KeyCode.W) && htboxtimer2 >= 0.11f)
         {

@@ -101,6 +101,8 @@ public class Conductor : MonoBehaviour
         StartCoroutine(HitReactionRoutine());
     }
 
+
+
     IEnumerator HitReactionRoutine()
     {
         inHitReaction = true;
@@ -133,5 +135,11 @@ public class Conductor : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
 
         inHitReaction = false;
+    }
+
+    public float GetSongBeatPosition()
+    {
+        float songPosition = (float)(AudioSettings.dspTime - dspSongTime);
+        return songPosition / secPerBeat;
     }
 }
