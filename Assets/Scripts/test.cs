@@ -126,7 +126,7 @@ public class test : MonoBehaviour
                 oldscore = 0;
                 htbox1.SetActive(false);
 
-                conductor.GetComponent<Conductor>().anim.Play("blocked");
+                //conductor.GetComponent<Conductor>().anim.Play("blocked");
 
                 // **Trigger Camera Shake on a successful hit**
                 if (cameraShake != null)
@@ -149,7 +149,7 @@ public class test : MonoBehaviour
             {
                 cameraShake.ShakeCamera(0.05f, 0.05f);
             }
-            conductor.GetComponent<Conductor>().anim.Play("blocked");
+            //conductor.GetComponent<Conductor>().anim.Play("blocked");
             htbox2.GetComponent<TestParry>().guardcounter = false;
             conductor.GetComponent<Conductor>().stunduration = 0;
             Debug.Log("Player attacks stunned enemy!");

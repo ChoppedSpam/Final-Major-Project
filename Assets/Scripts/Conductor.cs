@@ -1,54 +1,29 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SocialPlatforms.Impl;
 
 public class Conductor : MonoBehaviour
 {
-    public GameObject StarStunBox;
+    public Transform starSpawnPoint;
+    public float stunduration = 0f;
+    public GameObject hitbox2;
+    public GameObject StarFlyPrefab;
 
     public Animator anim;
-    public GameObject hurtbox;
-    public GameObject player;
-    public int[] beatstomiss;
-    public int[] SecondHit;
-
-    [Range(0.1f, 0.4f)]
-    public float Early;
-    [Range(0.1f, 0.4f)]
-    public float Late;
-
-    public float oldscore;
-    public int misscount;
-    public float timepressed;
-    public bool even;
-    public bool SecondHitAct = false;
     public GameObject hitbox1;
-    public GameObject hitbox2;
-
     public float songBpm;
-    public float secPerBeat;
-    public float songPosition;
-    public float songPositionInBeats;
-    public float dspSongTime;
     public AudioSource musicSource;
 
-    public float currentBeat;
-    public float BeatRounded;
-    public float BeatRoundedDown;
-
-    public bool offline = false;
-    public float timer;
+    private float secPerBeat;
+    private float dspSongTime;
+    private float songPosition;
+    private float songPositionInBeats;
+    private float lastBeat = -1;
 
     public bool isAttacking = false;
-    public float lastBeat = -1; // Keeps track of last processed beat
-
-    public float stunduration = 0f;
+    public bool inHitReaction = false;
 
     void Start()
     {
-        musicSource = GetComponent<AudioSource>();
         secPerBeat = 60f / songBpm;
         dspSongTime = (float)AudioSettings.dspTime;
         musicSource.Play();
@@ -56,128 +31,107 @@ public class Conductor : MonoBehaviour
 
     void Update()
     {
-        /*if(currentBeat >= BeatRounded - 0.175f)
-        {
-            StarStunBox.SetActive(true);
-        }
-        else
-        {
-            StarStunBox.SetActive(false);
-        }*/
+        AnimatorStateInfo state = anim.GetCurrentAnimatorStateInfo(0);
 
+        if (inHitReaction && !isAttacking && state.IsName("idle") && stunduration > 2.5f)
+        {
+            Debug.LogWarning("SafetyNet triggered: reset full enemy state");
+
+            inHitReaction = false;
+            isAttacking = false;
+            stunduration = 0f;
+
+            // Force reset animator to idle, in case it's still mid-blend or stuck
+            anim.Play("idle", 0, 0f);
+
+            
+        }
 
         stunduration += Time.deltaTime;
 
-        if (Input.GetKey(KeyCode.E))
-        {
-            timepressed = songPositionInBeats;
-        }
-
-        if (!isAttacking)
-        {
-            offline = true;
-        }
-        else
-        {
-            offline = false;
-        }
-
-        SecondHitAct = false;
-        offline = false;
-
         songPosition = (float)(AudioSettings.dspTime - dspSongTime);
         songPositionInBeats = songPosition / secPerBeat;
-        currentBeat = songPositionInBeats;
-        BeatRounded = Mathf.CeilToInt(currentBeat);
-        BeatRoundedDown = Mathf.FloorToInt(currentBeat);
 
-        even = (BeatRounded % 2 == 0);
+        int beatRounded = Mathf.FloorToInt(songPositionInBeats);
+        if (beatRounded == lastBeat) return;
+        lastBeat = beatRounded;
 
-        // If it's the same beat as last frame, do nothing to prevent retriggering
-        if (BeatRounded == lastBeat)
-            return;
+        // DEBUG INFO
+        Debug.Log($"[Conductor] Beat: {beatRounded} | isAttacking: {isAttacking} | inHitReaction: {inHitReaction}");
 
-        lastBeat = BeatRounded; // Update last processed beat
-
-        
-
-        foreach (var item in beatstomiss)
+        // START ATTACK LOGIC
+        if (!isAttacking && !inHitReaction)
         {
-            if (item == BeatRounded)
+            bool isIdle = state.IsName("idle");
+
+            if (isIdle)
             {
-                offline = true;
-                hitbox1.SetActive(false);
-                hitbox2.SetActive(false);
-                return; // Skip attack logic if offline
+                isAttacking = true;
+
+                // Play attack animation
+                anim.Play("hit1", 0, 0f); // Change to Startup1 if preferred
+
+                // Start hitbox coroutine
+                StartCoroutine(ActivateHitbox());
+
+                // Reset attack flag after short delay
+                StartCoroutine(ResetAttackFlag(secPerBeat * 0.8f));
             }
-        }
-
-        foreach (var item in SecondHit)
-        {
-            if (item == BeatRounded)
-            {
-                SecondHitAct = true;
-                break;
-            }
-        }
-
-        if (hurtbox.GetComponent<hurtbox>().enemyhealth <= 0f)
-        {
-            offline = true;
-            hitbox1.SetActive(false);
-            hitbox2.SetActive(false);
-            return;
-        }
-
-        // **Only allow attacks when a new beat is detected**
-        if (!isAttacking && !anim.GetCurrentAnimatorStateInfo(0).IsName("blocked"))
-        {
-            isAttacking = true; // Lock attack state
-
-            if (SecondHitAct) // Variation attack
-            {
-                if (even)
-                {
-                    anim.Play("SecondHitStart");
-                    StartCoroutine(HitboxTiming(hitbox2, 0.1f, 0.4f));
-                }
-                else
-                {
-                    anim.Play("SecondHit");
-                    StartCoroutine(HitboxTiming(hitbox2, 0.1f, 0.4f));
-                }
-            }
-            else // Normal attack
-            {
-                if (even )
-                {
-                    anim.Play("Startup1");
-                }
-                else
-                {
-                    anim.Play("hit1");
-
-                    StartCoroutine(HitboxTiming(hitbox2, 0.1f, 0.4f));
-                }
-            }
-
-            StartCoroutine(ResetAttackFlag(secPerBeat * 0.8f)); // Ensure attack doesn't retrigger too quickly
         }
     }
 
-    IEnumerator HitboxTiming(GameObject hitbox, float delayBefore, float activeTime)
+    IEnumerator ActivateHitbox()
     {
-        yield return new WaitForSeconds(delayBefore);
-        hitbox.SetActive(true);
-        yield return new WaitForSeconds(activeTime);
-        hitbox.SetActive(false);
+        yield return new WaitForSeconds(0.1f); // delay before hitbox appears
+        hitbox1.SetActive(true);
+        yield return new WaitForSeconds(0.3f); // active time
+        hitbox1.SetActive(false);
+        yield return new WaitForSeconds(0.2f); // cooldown
+        isAttacking = false;
     }
 
     IEnumerator ResetAttackFlag(float delay)
     {
         yield return new WaitForSeconds(delay);
-        isAttacking = false; // Allow new attack after the delay
+        isAttacking = false;
     }
 
+    public void StartHitReaction()
+    {
+        StartCoroutine(HitReactionRoutine());
+    }
 
+    IEnumerator HitReactionRoutine()
+    {
+        inHitReaction = true;
+        stunduration = 0f;
+
+        // Force play animation
+        anim.Play("idle", 0, 0f);
+        yield return null;
+        anim.Play("Empty", 0, 0f);
+
+        // Spawn stars
+        for (int i = 0; i < 6; i++)
+        {
+            Vector3 spawnPos = starSpawnPoint.position;
+            GameObject star = Instantiate(StarFlyPrefab, spawnPos, Quaternion.identity);
+
+            Rigidbody2D rb = star.GetComponent<Rigidbody2D>();
+            if (rb != null)
+            {
+                float angle = Random.Range(20f, 60f) * Mathf.Deg2Rad;
+                float speed = Random.Range(15f, 20f);
+                Vector2 dir = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
+                rb.velocity = dir * speed;
+                rb.angularVelocity = Random.Range(-360f, 360f);
+            }
+
+            Destroy(star, 1.5f);
+        }
+
+        yield return new WaitForSeconds(0.2f);
+
+        inHitReaction = false;
+    }
 }
