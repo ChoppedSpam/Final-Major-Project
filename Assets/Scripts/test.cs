@@ -46,6 +46,8 @@ public class test : MonoBehaviour
 
     public bool hitting;
 
+    private bool isHit = false;
+
     private CameraShake cameraShake; // Reference to CameraShake script
 
     // Start is called before the first frame update
@@ -168,6 +170,31 @@ public class test : MonoBehaviour
             score += 500; // **Bonus points for attacking stunned enemy**
             combo += 1; // **Increase combo**
         }
+    }
+
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Hit" && !isHit)
+        {
+            Animator playerAnim = Player.GetComponent<test>().anim;
+
+            // Check if player is not punching
+            if (!playerAnim.GetCurrentAnimatorStateInfo(0).IsName("Punch"))
+            {  
+                isHit = true;
+                playerAnim.Play("StarGetHit", 0, 0f);
+                htbox1.GetComponent<hurtbox>().playerhealth -= 10;
+                Player.GetComponent<test>().miss++;
+                StartCoroutine(ResetHit());
+            }
+        }
+    }
+
+    IEnumerator ResetHit()
+    {
+        yield return new WaitForSeconds(0.5f); // Cooldown to prevent multiple triggers
+        isHit = false;
     }
 
     IEnumerator DisableHitboxAfterDelay(GameObject obj, float time)

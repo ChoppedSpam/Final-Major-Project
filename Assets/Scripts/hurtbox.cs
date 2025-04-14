@@ -11,6 +11,7 @@ public class hurtbox : MonoBehaviour
     public GameObject Enemy;
     public Animator EnemyAnims;
     public GameObject EnemyHealthSlider;
+    public GameObject playerHealthSlider;
     public GameObject Player;
     public Animator PlayerAnims;
     public GameObject Conductor;
@@ -37,6 +38,7 @@ public class hurtbox : MonoBehaviour
     void Update()
     {
         EnemyHealthSlider.GetComponent<Slider>().value = enemyhealth / 100f;
+        playerHealthSlider.GetComponent<Slider>().value = playerhealth / 100f;
 
         if (counter == true)
         {

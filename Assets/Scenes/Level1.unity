@@ -955,6 +955,7 @@ MonoBehaviour:
   Enemy: {fileID: 2055749617}
   EnemyAnims: {fileID: 737835439}
   EnemyHealthSlider: {fileID: 411970563}
+  playerHealthSlider: {fileID: 2042378304}
   Player: {fileID: 2002519427}
   PlayerAnims: {fileID: 122904326}
   Conductor: {fileID: 596796328}
@@ -962,8 +963,8 @@ MonoBehaviour:
   htbox2: {fileID: 826737386}
   HitVFXPrefab: {fileID: 8128979217786619732, guid: 687ded3caddcd0f45aa70e3dc19fd598, type: 3}
   StarFlyPrefab: {fileID: 7931372730975506992, guid: afbef05aca143e44fb147781c92673c1, type: 3}
-  enemyhealth: 0.1
-  playerhealth: 0.1
+  enemyhealth: 100
+  playerhealth: 100
   mult: 1
   timepressed: 0
   early: 0.06
@@ -5613,7 +5614,7 @@ Transform:
   m_GameObject: {fileID: 2002519427}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.39, y: -1.09, z: 0}
+  m_LocalPosition: {x: -1.54, y: -1.09, z: 0}
   m_LocalScale: {x: 2.0185, y: 4.6574, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -6107,7 +6108,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2123930176
 Transform:
   m_ObjectHideFlags: 0
@@ -6117,7 +6118,7 @@ Transform:
   m_GameObject: {fileID: 2123930175}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.4661845, y: -0.060714602, z: 0}
+  m_LocalPosition: {x: 0.04, y: -0.060714602, z: 0}
   m_LocalScale: {x: 2.0185, y: 1.2225674, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
