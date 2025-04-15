@@ -1,8 +1,12 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Conductor : MonoBehaviour
 {
+    public List<int> kickBeats;
+    public List<int> beatsToMiss;
+
     public Transform starSpawnPoint;
     public float stunduration = 0f;
     public GameObject hitbox2;
@@ -10,6 +14,7 @@ public class Conductor : MonoBehaviour
 
     public Animator anim;
     public GameObject hitbox1;
+    public GameObject hitboxKick;
     public float songBpm;
     public AudioSource musicSource;
 
@@ -24,6 +29,7 @@ public class Conductor : MonoBehaviour
 
     void Start()
     {
+        AddBeatRangeToMiss(1, 2);
         secPerBeat = 60f / songBpm;
         dspSongTime = (float)AudioSettings.dspTime;
         musicSource.Play();
@@ -52,6 +58,11 @@ public class Conductor : MonoBehaviour
         songPosition = (float)(AudioSettings.dspTime - dspSongTime);
         songPositionInBeats = songPosition / secPerBeat;
 
+        
+
+        isAttacking = false;
+
+        
         int beatRounded = Mathf.FloorToInt(songPositionInBeats);
         if (beatRounded == lastBeat) return;
         lastBeat = beatRounded;
@@ -59,33 +70,48 @@ public class Conductor : MonoBehaviour
         // DEBUG INFO
         Debug.Log($"[Conductor] Beat: {beatRounded} | isAttacking: {isAttacking} | inHitReaction: {inHitReaction}");
 
-        // START ATTACK LOGIC
-        if (!isAttacking && !inHitReaction)
+        if (beatsToMiss.Contains(beatRounded)) return;
+
+        isAttacking = false;
+
+        
+        if (beatRounded % 2 != 0)
         {
-            bool isIdle = state.IsName("idle");
+            anim.Play("Startup1", 0, 0f);
+        }
+        else if (!inHitReaction)
+        {
+            isAttacking = true;
 
-            if (isIdle)
+            if (kickBeats.Contains(beatRounded))
             {
-                isAttacking = true;
-
-                // Play attack animation
-                anim.Play("hit1", 0, 0f); // Change to Startup1 if preferred
-
-                // Start hitbox coroutine
+                anim.Play("kick", 0, 0f);
+                StartCoroutine(ActivateHitboxKick());
+            }
+            else
+            {
+                anim.Play("hit1", 0, 0f);
                 StartCoroutine(ActivateHitbox());
-
-                // Reset attack flag after short delay
-                StartCoroutine(ResetAttackFlag(secPerBeat * 0.8f));
             }
         }
     }
 
     IEnumerator ActivateHitbox()
     {
-        yield return new WaitForSeconds(0.2f); // delay before hitbox appears
+        yield return new WaitForSeconds(0.3f); // delay before hitbox appears
         hitbox1.SetActive(true);
         yield return new WaitForSeconds(0.3f); // active time
         hitbox1.SetActive(false);
+        yield return new WaitForSeconds(0.2f); // cooldown
+        isAttacking = false;
+    }
+
+    IEnumerator ActivateHitboxKick()
+    {
+        yield return new WaitForSeconds(0.2f); // delay before hitbox appears
+        hitboxKick.SetActive(true);
+        yield return new WaitForSeconds(0.3f); // active time
+        hitboxKick.SetActive(false);
         yield return new WaitForSeconds(0.2f); // cooldown
         isAttacking = false;
     }
@@ -94,6 +120,15 @@ public class Conductor : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
         isAttacking = false;
+    }
+
+    void AddBeatRangeToMiss(int start, int end)
+    {
+        for (int i = start; i <= end; i++)
+        {
+            if (!beatsToMiss.Contains(i))
+                beatsToMiss.Add(i);
+        }
     }
 
     public void StartHitReaction()

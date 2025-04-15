@@ -184,7 +184,7 @@ public class test : MonoBehaviour
             {  
                 isHit = true;
                 playerAnim.Play("StarGetHit", 0, 0f);
-                htbox1.GetComponent<hurtbox>().playerhealth -= 10;
+                
                 Player.GetComponent<test>().miss++;
                 StartCoroutine(ResetHit());
             }
@@ -193,6 +193,7 @@ public class test : MonoBehaviour
 
     IEnumerator ResetHit()
     {
+        htbox1.GetComponent<hurtbox>().playerhealth -= 10;
         yield return new WaitForSeconds(0.5f); // Cooldown to prevent multiple triggers
         isHit = false;
     }
