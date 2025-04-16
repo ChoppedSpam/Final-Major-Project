@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Hit
   - Enemy
+  - Early
+  - Perfect
+  - Late
   layers:
   - Default
   - TransparentFX

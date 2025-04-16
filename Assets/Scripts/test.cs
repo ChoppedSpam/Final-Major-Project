@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class test : MonoBehaviour
 {
-    public float inputOffset = 0.07f;
+    public float inputOffset = 0.05f;
     public float timingDiff;
     public float timepressed = -1f;
 
@@ -122,7 +122,7 @@ public class test : MonoBehaviour
             anim.Play("Punch");
             htboxtimer = 0;
             htbox1.SetActive(true);
-            StartCoroutine(DisableHitboxAfterDelay(htbox1, 0.2f));
+            StartCoroutine(DisableHitboxAfterDelay(htbox1, 0.05f));
             oldscore = score;
         }
 

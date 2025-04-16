@@ -57,53 +57,97 @@ public class hurtbox : MonoBehaviour
 
     IEnumerator DelayedHitCheck()
     {
-        yield return new WaitForSeconds(0.05f);
+        yield return new WaitForSeconds(0.01f);
 
         timepressed = Player.GetComponent<test>().timepressed;
         GameObject htbox1 = Player.GetComponent<test>().htbox1;
         GameObject htbox2 = Player.GetComponent<test>().htbox2;
 
-        if (htbox1.activeSelf || htbox2.activeSelf)
+        /*if (htbox1.activeSelf || htbox2.activeSelf)
         {
-            //float currentBeat = Conductor.GetComponent<Conductor>().GetSongBeatPosition();
-            //float diff = currentBeat - timepressed;
+            //if(timepressed > Conductor.GetComponent<Conductor>().beatRoundedUp - 0.4f && timepressed < Conductor.GetComponent<Conductor>().beatRoundedUp - 0.1f)
+            //{
+            //    Debug.Log("EARLY");
+            //    Player.GetComponent<test>().hitearly++;
+            //    Player.GetComponent<test>().score += 100 * mult;
+            //    Player.GetComponent<test>().enemyhealth -= 1;
+            //}
 
-            float diff = Player.GetComponent<test>().timingDiff;
+            //if(timepressed < Conductor.GetComponent<Conductor>().lastBeat + 0.4f)
+            //{
+            //    Debug.Log("LATE");
+            //    Player.GetComponent<test>().hitlate++;
+            //    Player.GetComponent<test>().score += 100 * mult;
+            //    Player.GetComponent<test>().enemyhealth -= 1;
+            //}
 
-            //Debug.Log($"[Beat Check] Pressed: {timepressed:F3}, Current: {currentBeat:F3}, Diff: {diff:F3}");
+            //if(timepressed > Conductor.GetComponent<Conductor>().beatRoundedUp - 0.1f && timepressed < Conductor.GetComponent<Conductor>().beatRoundedUp)
+            //{
+            //    Debug.Log("EARLY PERFECT");
+            //    Player.GetComponent<test>().hitperfect++;
+            //    Player.GetComponent<test>().score += 300 * mult;
+            //    Player.GetComponent<test>().enemyhealth -= 5;
+            //}
 
-            float perfectWindow = 0.1f;
-            float earlyLateWindow = 5f;
+            //if (timepressed > Conductor.GetComponent<Conductor>().lastBeat && timepressed < Conductor.GetComponent<Conductor>().lastBeat + 0.1f)
+            //{
+            //    Debug.Log("LATE PERFECT");
+            //    Player.GetComponent<test>().hitperfect++;
+            //    Player.GetComponent<test>().score += 300 * mult;
+            //    Player.GetComponent<test>().enemyhealth -= 5;
+            //}
 
-            if (Mathf.Abs(diff) <= perfectWindow)
+            float time = timepressed;
+            float beatUp = Conductor.GetComponent<Conductor>().beatRoundedUp;
+            float beatDown = Conductor.GetComponent<Conductor>().lastBeat;
+
+            // DEBUG
+            Debug.Log($"[HIT DEBUG] Pressed: {time:F3}, beatUp: {beatUp}, beatDown: {beatDown}");
+
+            /*if (time > beatUp - 0.1f && time < beatUp)
             {
-                Debug.Log("PERFECT");
+                Debug.Log("EARLY PERFECT");
                 Player.GetComponent<test>().hitperfect++;
                 Player.GetComponent<test>().score += 300 * mult;
                 Player.GetComponent<test>().enemyhealth -= 5;
             }
-            else if (Mathf.Abs(diff) <= earlyLateWindow)
+            else if (time > beatDown && time < beatDown + 0.1f)
             {
-                if (diff < 0)
-                {
-                    Debug.Log("EARLY");
-                    Player.GetComponent<test>().hitearly++;
-                }
-                else
-                {
-                    Debug.Log("LATE");
-                    Player.GetComponent<test>().hitlate++;
-                }
-
-                Player.GetComponent<test>().score += 100 * mult;
-                Player.GetComponent<test>().enemyhealth -= 1;
+                Debug.Log("LATE PERFECT");
+                Player.GetComponent<test>().hitperfect++;
+                Player.GetComponent<test>().score += 300 * mult;
+                Player.GetComponent<test>().enemyhealth -= 5;
+            }
+            else if (time > beatUp - 0.4f && time < beatUp - 0.1f)
+            {
+                
+            }
+            else if (time > beatDown + 0.1f && time < beatDown + 0.4f)
+            {
+                
             }
             else
             {
                 Debug.Log("MISS");
-                Player.GetComponent<test>().miss++;
-                playerhealthCalc -= 10;
-            }
+            }*/
+
+            /*Debug.Log("PERFECT");
+            Player.GetComponent<test>().hitperfect++;
+            Player.GetComponent<test>().score += 300 * mult;
+            Player.GetComponent<test>().enemyhealth -= 5;
+
+            Debug.Log("EARLY");
+            Player.GetComponent<test>().hitearly++;
+
+            Debug.Log("LATE");
+            Player.GetComponent<test>().hitlate++;
+
+            Player.GetComponent<test>().score += 100 * mult;
+            Player.GetComponent<test>().enemyhealth -= 1;
+
+            Debug.Log("MISS");
+            Player.GetComponent<test>().miss++;
+            playerhealthCalc -= 10;
 
             Conductor.GetComponent<Conductor>().StartHitReaction();
             Vector3 vfxPos = Enemy.transform.position + new Vector3(0, 1.5f, 0);
@@ -114,6 +158,45 @@ public class hurtbox : MonoBehaviour
         {
             Player.GetComponent<test>().playerhealth -= 5;
             PlayerAnims.Play("PlayerHit", 0, 0f);
+        }*/
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if(other.gameObject.tag == "Early")
+        {
+            Debug.Log("EARLY");
+            Player.GetComponent<test>().hitearly++;
+            Player.GetComponent<test>().score += 100 * mult;
+            Player.GetComponent<test>().enemyhealth -= 1;
+            Conductor.GetComponent<Conductor>().StartHitReaction();
+            Vector3 vfxPos = Enemy.transform.position + new Vector3(0, 1.5f, 0);
+            GameObject vfx = Instantiate(HitVFXPrefab, vfxPos, Quaternion.identity);
+            Destroy(vfx, 0.3f);
+        }
+
+        if (other.gameObject.tag == "Late")
+        {
+            Debug.Log("LATE");
+            Player.GetComponent<test>().hitlate++;
+            Player.GetComponent<test>().score += 100 * mult;
+            Player.GetComponent<test>().enemyhealth -= 1;
+            Conductor.GetComponent<Conductor>().StartHitReaction();
+            Vector3 vfxPos = Enemy.transform.position + new Vector3(0, 1.5f, 0);
+            GameObject vfx = Instantiate(HitVFXPrefab, vfxPos, Quaternion.identity);
+            Destroy(vfx, 0.3f);
+        }
+
+        if (other.gameObject.tag == "Perfect")
+        {
+            Debug.Log("PERFECT");
+            Player.GetComponent<test>().hitperfect++;
+            Player.GetComponent<test>().score += 300 * mult;
+            Player.GetComponent<test>().enemyhealth -= 5;
+            Conductor.GetComponent<Conductor>().StartHitReaction();
+            Vector3 vfxPos = Enemy.transform.position + new Vector3(0, 1.5f, 0);
+            GameObject vfx = Instantiate(HitVFXPrefab, vfxPos, Quaternion.identity);
+            Destroy(vfx, 0.3f);
         }
     }
 
