@@ -14,6 +14,15 @@ public class test : MonoBehaviour
 
     public GameObject EnemyHealthSlider;
     public GameObject playerHealthSlider;
+    public GameObject PlayerPortrait;
+    public GameObject PlayerPortrait2;
+    public GameObject PlayerPortrait3;
+    public GameObject EnemyPortrait;
+    public GameObject EnemyPortrait2;
+    public GameObject EnemyPortrait3;
+    public RectTransform tugOfWarFill;
+    public RectTransform tugOfWarFillHeart;
+    public float maxOffset = 870f;
     public float enemyhealth = 100f;
     public float playerhealth = 100f;
 
@@ -51,10 +60,14 @@ public class test : MonoBehaviour
     public float speed = 5f;
 
     public bool hitting;
+    public bool dead = false;
+    public Sprite deadasl;
+    public SpriteRenderer deadone;
 
     private bool isHit = false;
 
     private CameraShake cameraShake; // Reference to CameraShake script
+
 
     // Start is called before the first frame update
     void Start()
@@ -75,9 +88,65 @@ public class test : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (playerhealth >= 50)
+        {
+            PlayerPortrait.SetActive(true);
+            PlayerPortrait2.SetActive(false);
+            PlayerPortrait3.SetActive(false);
+        }
+        else if (playerhealth <= 50 && playerhealth >= 30)
+        {
+            PlayerPortrait.SetActive(false);
+            PlayerPortrait2.SetActive(true);
+            PlayerPortrait3.SetActive(false);
+        }
+        else if (playerhealth <= 30)
+        {
+            PlayerPortrait.SetActive(false);
+            PlayerPortrait2.SetActive(false);
+            PlayerPortrait3.SetActive(true);
+        }
 
-        EnemyHealthSlider.GetComponent<Slider>().value = enemyhealth / 100f;
-        playerHealthSlider.GetComponent<Slider>().value = playerhealth / 100f;
+
+        if (playerhealth <= 0 && dead == false)
+        {
+            anim.Play("stardie");
+            anim.Play("stardie", 1);
+            dead = true;
+        }
+
+        if(dead == true)
+        {
+            deadone.GetComponent<SpriteRenderer>().sprite = deadasl;
+        }
+
+        // ENEMY PORTRAITS
+        if (enemyhealth >= 50)
+        {
+            EnemyPortrait.SetActive(true);
+            EnemyPortrait2.SetActive(false);
+            EnemyPortrait3.SetActive(false);
+        }
+        else if (enemyhealth <= 50 && enemyhealth >= 30)
+        {
+            EnemyPortrait.SetActive(false);
+            EnemyPortrait2.SetActive(true);
+            EnemyPortrait3.SetActive(false);
+        }
+        else if (enemyhealth <= 30)
+        {
+            EnemyPortrait.SetActive(false);
+            EnemyPortrait2.SetActive(false);
+            EnemyPortrait3.SetActive(true);
+        }
+
+
+        float totalHealth = playerhealth + enemyhealth;
+        float balance = playerhealth / totalHealth; // value from 0.0 to 1.0
+
+        // Apply this to tug-of-war UI
+        tugOfWarFill.anchoredPosition = new Vector2(Mathf.Lerp(-maxOffset, maxOffset, balance), 0f);
+        tugOfWarFillHeart.anchoredPosition = new Vector2(Mathf.Lerp(-maxOffset, maxOffset, balance), 0f);
 
         if (combo >= oldcombo + 25)
         {
