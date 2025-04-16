@@ -19,16 +19,14 @@ public class Ouch : MonoBehaviour
         {
             Animator playerAnim = Player.GetComponent<test>().anim;
 
-            // Check if player is not punching
-            if (!playerAnim.GetCurrentAnimatorStateInfo(0).IsName("Punch"))
-            {
-                
-                isHit = true;
-                playerAnim.Play("StarGetHit", 0, 0f);
-                htbox1.GetComponent<hurtbox>().playerhealth -= 10;
-                Player.GetComponent<test>().miss++;
-                StartCoroutine(ResetHit());
-            }
+            isHit = true;
+            playerAnim.Play("StarGetHit", 0, 0f);
+            Player.GetComponent<test>().playerhealth -= 5;
+            Player.GetComponent<test>().miss++;
+            Debug.Log("MISSS");
+            StartCoroutine(ResetHit());
+
+
         }
     }
 

@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,8 +11,7 @@ public class hurtbox : MonoBehaviour
 
     public GameObject Enemy;
     public Animator EnemyAnims;
-    public GameObject EnemyHealthSlider;
-    public GameObject playerHealthSlider;
+    
     public GameObject Player;
     public Animator PlayerAnims;
     public GameObject Conductor;
@@ -20,25 +20,24 @@ public class hurtbox : MonoBehaviour
     public GameObject HitVFXPrefab;
     public GameObject StarFlyPrefab;
 
-    public float enemyhealth = 100f;
-    public float playerhealth = 100f;
+    
     public float mult = 1f;
     public float timepressed;
     public float early = 0.06f;
     public float late = 0.15f;
+    public float playerhealthCalc;
     public bool counter = false;
 
 
     void Start()
     {
-        enemyhealth = 100f;
-        playerhealth = 100f;
+        
+        playerhealthCalc = 100f;
     }
 
     void Update()
     {
-        EnemyHealthSlider.GetComponent<Slider>().value = enemyhealth / 100f;
-        playerHealthSlider.GetComponent<Slider>().value = playerhealth / 100f;
+        
 
         if (counter == true)
         {
@@ -66,24 +65,26 @@ public class hurtbox : MonoBehaviour
 
         if (htbox1.activeSelf || htbox2.activeSelf)
         {
-            float currentBeat = Conductor.GetComponent<Conductor>().GetSongBeatPosition();
-            float diff = timepressed - currentBeat;
+            //float currentBeat = Conductor.GetComponent<Conductor>().GetSongBeatPosition();
+            //float diff = currentBeat - timepressed;
 
-            Debug.Log($"[Beat Check] Pressed: {timepressed:F3}, Current: {currentBeat:F3}, Diff: {diff:F3}");
+            float diff = Player.GetComponent<test>().timingDiff;
 
-            float perfectWindow = 0.2f;
-            float earlyLateWindow = 0.5f;
+            //Debug.Log($"[Beat Check] Pressed: {timepressed:F3}, Current: {currentBeat:F3}, Diff: {diff:F3}");
+
+            float perfectWindow = 0.1f;
+            float earlyLateWindow = 5f;
 
             if (Mathf.Abs(diff) <= perfectWindow)
             {
                 Debug.Log("PERFECT");
                 Player.GetComponent<test>().hitperfect++;
                 Player.GetComponent<test>().score += 300 * mult;
-                enemyhealth -= 5;
+                Player.GetComponent<test>().enemyhealth -= 5;
             }
             else if (Mathf.Abs(diff) <= earlyLateWindow)
             {
-                if (diff > 0)
+                if (diff < 0)
                 {
                     Debug.Log("EARLY");
                     Player.GetComponent<test>().hitearly++;
@@ -95,12 +96,13 @@ public class hurtbox : MonoBehaviour
                 }
 
                 Player.GetComponent<test>().score += 100 * mult;
-                enemyhealth -= 1;
+                Player.GetComponent<test>().enemyhealth -= 1;
             }
             else
             {
                 Debug.Log("MISS");
                 Player.GetComponent<test>().miss++;
+                playerhealthCalc -= 10;
             }
 
             Conductor.GetComponent<Conductor>().StartHitReaction();
@@ -110,7 +112,7 @@ public class hurtbox : MonoBehaviour
         }
         else
         {
-            playerhealth -= 5;
+            Player.GetComponent<test>().playerhealth -= 5;
             PlayerAnims.Play("PlayerHit", 0, 0f);
         }
     }

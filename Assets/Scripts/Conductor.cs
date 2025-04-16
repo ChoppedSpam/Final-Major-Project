@@ -18,14 +18,16 @@ public class Conductor : MonoBehaviour
     public float songBpm;
     public AudioSource musicSource;
 
-    private float secPerBeat;
-    private float dspSongTime;
-    private float songPosition;
-    private float songPositionInBeats;
-    private float lastBeat = -1;
+    public float secPerBeat;
+    public float dspSongTime;
+    public float songPosition;
+    public float songPositionInBeats;
+    public float lastBeat = -1;
 
     public bool isAttacking = false;
     public bool inHitReaction = false;
+
+    public int beatRoundedUp;
 
     void Start()
     {
@@ -37,6 +39,7 @@ public class Conductor : MonoBehaviour
 
     void Update()
     {
+        Time.timeScale = 0.9f;
         AnimatorStateInfo state = anim.GetCurrentAnimatorStateInfo(0);
 
         if (inHitReaction && !isAttacking && state.IsName("idle") && stunduration > 2.5f)
@@ -66,6 +69,8 @@ public class Conductor : MonoBehaviour
         int beatRounded = Mathf.FloorToInt(songPositionInBeats);
         if (beatRounded == lastBeat) return;
         lastBeat = beatRounded;
+
+        beatRoundedUp = Mathf.RoundToInt(lastBeat + 1f);
 
         // DEBUG INFO
         Debug.Log($"[Conductor] Beat: {beatRounded} | isAttacking: {isAttacking} | inHitReaction: {inHitReaction}");
@@ -98,7 +103,7 @@ public class Conductor : MonoBehaviour
 
     IEnumerator ActivateHitbox()
     {
-        yield return new WaitForSeconds(0.3f); // delay before hitbox appears
+        yield return new WaitForSeconds(0.2f); // delay before hitbox appears
         hitbox1.SetActive(true);
         yield return new WaitForSeconds(0.3f); // active time
         hitbox1.SetActive(false);

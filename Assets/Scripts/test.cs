@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class test : MonoBehaviour
 {
@@ -10,6 +11,11 @@ public class test : MonoBehaviour
     public float timepressed = -1f;
 
     public Animator anim;
+
+    public GameObject EnemyHealthSlider;
+    public GameObject playerHealthSlider;
+    public float enemyhealth = 100f;
+    public float playerhealth = 100f;
 
     public TMP_Text Hits;
     public TMP_Text Hitslate;
@@ -53,6 +59,9 @@ public class test : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        enemyhealth = 100f;
+        playerhealth = 100f;
+
         oldcombo = 0;
         htboxtimer = 2;
         rb = GetComponent<Rigidbody2D>();
@@ -66,6 +75,10 @@ public class test : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        EnemyHealthSlider.GetComponent<Slider>().value = enemyhealth / 100f;
+        playerHealthSlider.GetComponent<Slider>().value = playerhealth / 100f;
+
         if (combo >= oldcombo + 25)
         {
             htbox1.GetComponent<hurtbox>().mult = htbox1.GetComponent<hurtbox>().mult + .25f;
@@ -129,7 +142,7 @@ public class test : MonoBehaviour
             if (score == oldscore && score != 0) // If no score change, player missed
             {
                 miss++;
-                htbox1.GetComponent<hurtbox>().playerhealth -= 10;
+                playerhealth -= 5;
                 combo = 0;
                 oldscore = 0;
                 htbox1.SetActive(false);
@@ -193,9 +206,10 @@ public class test : MonoBehaviour
 
     IEnumerator ResetHit()
     {
-        htbox1.GetComponent<hurtbox>().playerhealth -= 10;
+        playerhealth -= 5;
         yield return new WaitForSeconds(0.5f); // Cooldown to prevent multiple triggers
         isHit = false;
+        
     }
 
     IEnumerator DisableHitboxAfterDelay(GameObject obj, float time)
