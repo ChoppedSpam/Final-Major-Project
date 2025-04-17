@@ -48,6 +48,12 @@ public class hurtbox : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
+        if (TutorialManager.Instance != null && TutorialManager.Instance.inTutorial)
+        {
+            Debug.Log("Paused for tutorial — skipping hit logic");
+            return; // Or return, depending on the method
+        }
+
         if (collision.gameObject.tag == "Hit" && counter == false)
         {
             Conductor.GetComponent<Conductor>().stunduration = 0f;
@@ -57,6 +63,10 @@ public class hurtbox : MonoBehaviour
 
     IEnumerator DelayedHitCheck()
     {
+
+        if (TutorialManager.Instance != null && TutorialManager.Instance.inTutorial)
+            yield break;
+
         yield return new WaitForSeconds(0.01f);
 
         timepressed = Player.GetComponent<test>().timepressed;
@@ -163,6 +173,12 @@ public class hurtbox : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
+
+        if (TutorialManager.Instance != null && TutorialManager.Instance.inTutorial)
+        {
+            Debug.Log("Paused for tutorial — skipping hit logic");
+            return; // Or return, depending on the method
+        }
 
         if (other.gameObject.tag == "Parry" && Player.GetComponent<test>().guardcounter)
         {

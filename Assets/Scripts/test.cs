@@ -29,6 +29,8 @@ public class test : MonoBehaviour
     public RectTransform tugOfWarFill;
     public RectTransform tugOfWarFillHeart;
     public float maxOffset = 870f;
+    private float targetX = 0f;
+    private float lerpSpeed = 8f;
     public float enemyhealth = 100f;
     public float playerhealth = 100f;
 
@@ -152,10 +154,12 @@ public class test : MonoBehaviour
 
         float totalHealth = playerhealth + enemyhealth;
         float balance = playerhealth / totalHealth; // value from 0.0 to 1.0
-
+        targetX = Mathf.Lerp(-maxOffset, maxOffset, balance);
         // Apply this to tug-of-war UI
-        tugOfWarFill.anchoredPosition = new Vector2(Mathf.Lerp(-maxOffset, maxOffset, balance), 0f);
-        tugOfWarFillHeart.anchoredPosition = new Vector2(Mathf.Lerp(-maxOffset, maxOffset, balance), 0f);
+        Vector2 anchoredPos = tugOfWarFill.anchoredPosition;
+        anchoredPos.x = Mathf.Lerp(anchoredPos.x, targetX, Time.deltaTime * lerpSpeed);
+        tugOfWarFill.anchoredPosition = anchoredPos;
+        tugOfWarFillHeart.anchoredPosition = anchoredPos;
 
         if (combo >= oldcombo + 25)
         {

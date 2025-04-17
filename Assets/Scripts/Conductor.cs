@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class Conductor : MonoBehaviour
 {
+    public float delay = 0;
+
+    public GameObject tutorialManagerObject;
+    private bool guardTutorialTriggered = false;
+    private bool tutorialTriggered = false;
     public List<int> kickBeats;
     public List<int> beatsToMiss;
 
@@ -38,7 +43,8 @@ public class Conductor : MonoBehaviour
 
     void Start()
     {
-        AddBeatRangeToMiss(1, 2);
+        AddBeatRangeToMiss(0, 2);
+        AddBeatRangeToMiss(6, 8);
         secPerBeat = 60f / songBpm;
         dspSongTime = (float)AudioSettings.dspTime;
         musicSource.Play();
@@ -46,7 +52,7 @@ public class Conductor : MonoBehaviour
 
     void Update()
     {
-        Time.timeScale = 1f;
+        delay += Time.deltaTime;
         AnimatorStateInfo state = anim.GetCurrentAnimatorStateInfo(0);
 
         if (inHitReaction && !isAttacking && state.IsName("idle") && stunduration > 2.5f)
@@ -75,6 +81,21 @@ public class Conductor : MonoBehaviour
         
         int beatRounded = Mathf.FloorToInt(songPositionInBeats);
         if (beatRounded == lastBeat) return;
+
+        if (beatRounded == 5 && !tutorialTriggered)
+        {
+            tutorialTriggered = true;
+            tutorialManagerObject.GetComponent<TutorialManager>().TriggerPunchTutorial();
+            return; // Prevent animation firing this frame
+
+        }
+
+        if (beatRounded == 11 && !guardTutorialTriggered)
+        {
+            guardTutorialTriggered = true;
+            tutorialManagerObject.GetComponent<TutorialManager>().TriggerGuardTutorial();
+            return;
+        }
         lastBeat = beatRounded;
 
         beatRoundedUp = Mathf.RoundToInt(lastBeat + 1f);
@@ -92,6 +113,8 @@ public class Conductor : MonoBehaviour
 
         // Want to trigger the animation 0.1s before the next beat
         float playDelay = Mathf.Max(0f, timeUntilNextBeat - 0.2f);
+
+        
 
         // Schedule the animation
         StartCoroutine(PlayEnemyAnimationEarly(playDelay, beatRounded));
