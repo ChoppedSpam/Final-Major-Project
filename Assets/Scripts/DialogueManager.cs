@@ -6,7 +6,9 @@ using Cinemachine;
 
 public class DialogueManager : MonoBehaviour
 {
-    
+    public GameObject portraitPlayer;
+    public GameObject portraitEnemy;
+
     [System.Serializable]
     public class DialogueLine
     {
@@ -51,14 +53,19 @@ public class DialogueManager : MonoBehaviour
     {
         foreach (DialogueLine line in dialogueLines)
         {
+
             // Switch camera
             if (line.isPlayerTalking)
             {
+                portraitPlayer.SetActive(true);
+                portraitEnemy.SetActive(false);
                 vcam_Player.Priority = 11;
                 vcam_Enemy.Priority = 10;
             }
             else
             {
+                portraitPlayer.SetActive(false);
+                portraitEnemy.SetActive(true);
                 vcam_Player.Priority = 10;
                 vcam_Enemy.Priority = 11;
             }

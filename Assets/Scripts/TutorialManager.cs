@@ -5,6 +5,7 @@ using TMPro;
 
 public class TutorialManager : MonoBehaviour
 {
+    
     public static TutorialManager Instance;
 
     [Header("Tutorial UI")]
