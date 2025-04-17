@@ -12,6 +12,12 @@ public class test : MonoBehaviour
 
     public Animator anim;
 
+    public int parryCharges = 3;
+    public int maxParryCharges = 3;
+    private int perfectChain = 0;
+    public GameObject parryTick1;
+    public GameObject parryTick2;
+    public GameObject parryTick3;
     public GameObject EnemyHealthSlider;
     public GameObject playerHealthSlider;
     public GameObject PlayerPortrait;
@@ -65,6 +71,9 @@ public class test : MonoBehaviour
     public SpriteRenderer deadone;
 
     private bool isHit = false;
+    public bool guardcounter = false;
+
+    
 
     private CameraShake cameraShake; // Reference to CameraShake script
 
@@ -201,6 +210,7 @@ public class test : MonoBehaviour
             anim.Play("Guard");
             htboxtimer2 = 0;
             htbox2.SetActive(true);
+            StartCoroutine(DisableHitboxAfterDelay(htbox2, 0.15f));
         }
 
 
@@ -248,9 +258,9 @@ public class test : MonoBehaviour
             //conductor.GetComponent<Conductor>().anim.Play("blocked");
             htbox2.GetComponent<TestParry>().guardcounter = false;
             conductor.GetComponent<Conductor>().stunduration = 0;
-            Debug.Log("Player attacks stunned enemy!");
-            score += 500; // **Bonus points for attacking stunned enemy**
-            combo += 1; // **Increase combo**
+            //Debug.Log("Player attacks stunned enemy!");
+            //score += 500; // **Bonus points for attacking stunned enemy**
+            //combo += 1; // **Increase combo**
         }
     }
 
@@ -266,7 +276,7 @@ public class test : MonoBehaviour
             {  
                 isHit = true;
                 playerAnim.Play("StarGetHit", 0, 0f);
-                
+                Player.GetComponent<test>().ResetPerfectChain();
                 Player.GetComponent<test>().miss++;
                 StartCoroutine(ResetHit());
             }
@@ -285,5 +295,54 @@ public class test : MonoBehaviour
     {
         yield return new WaitForSeconds(time);
         obj.SetActive(false);
+    }
+
+    IEnumerator HandleParryStun()
+    {
+        if (parryCharges <= 0)
+            yield break; // No charges available
+
+        parryCharges--;
+        UpdateParryUI();
+
+        guardcounter = true;
+
+        // Apply stun to enemy
+        conductor.GetComponent<Conductor>().isstunned = true;
+        conductor.GetComponent<Conductor>().parryHitbox.SetActive(true);
+        conductor.GetComponent<Conductor>().StartHitReaction();
+
+        yield return new WaitForSeconds(0.5f);
+
+        // Clear stun
+        conductor.GetComponent<Conductor>().isstunned = false;
+        conductor.GetComponent<Conductor>().parryHitbox.SetActive(false);
+        guardcounter = false;
+    }
+
+    void UpdateParryUI()
+    {
+        parryTick1.SetActive(parryCharges >= 1);
+        parryTick2.SetActive(parryCharges >= 2);
+        parryTick3.SetActive(parryCharges >= 3);
+    }
+
+    public void RegisterPerfect()
+    {
+        perfectChain++;
+
+        if (perfectChain >= 3 && parryCharges < maxParryCharges)
+        {
+            parryCharges++;
+            UpdateParryUI();
+            perfectChain = 0;
+
+            Debug.Log("Parry charge restored!");
+        }
+    }
+
+    public void ResetPerfectChain()
+    {
+        perfectChain = 0;
     }
 }

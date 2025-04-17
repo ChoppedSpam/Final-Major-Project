@@ -26,6 +26,7 @@ public class Conductor : MonoBehaviour
 
     public bool isAttacking = false;
     public bool inHitReaction = false;
+    public bool isstunned = false;
 
     public int beatRoundedUp;
 
@@ -33,6 +34,7 @@ public class Conductor : MonoBehaviour
     public GameObject perfectHitbox;
     public GameObject lateHitbox;
     public GameObject missHitbox;
+    public GameObject parryHitbox;
 
     void Start()
     {
@@ -181,7 +183,7 @@ public class Conductor : MonoBehaviour
         {
             anim.Play("Startup1", 0, 0f);
         }
-        else
+        else if(!isstunned)
         {
             isAttacking = true;
 
@@ -200,26 +202,37 @@ public class Conductor : MonoBehaviour
 
     IEnumerator ActivateJudgmentHitboxes()
     {
-        yield return new WaitForSeconds(0.15f);
-        earlyHitbox.SetActive(true);
-        yield return new WaitForSeconds(0.1f); // ~early window
-        earlyHitbox.SetActive(false);
-        yield return new WaitForSeconds(0.01f);
+        if (!isstunned)
+        {
+            yield return new WaitForSeconds(0.15f);
+            earlyHitbox.SetActive(true);
+            yield return new WaitForSeconds(0.1f); // ~early window
+            earlyHitbox.SetActive(false);
+            yield return new WaitForSeconds(0.01f);
+        }
 
-        perfectHitbox.SetActive(true);
-        yield return new WaitForSeconds(0.1f); // ~perfect window
-        perfectHitbox.SetActive(false);
-        yield return new WaitForSeconds(0.01f);
+        if(!isstunned)
+        {
+            perfectHitbox.SetActive(true);
+            yield return new WaitForSeconds(0.1f); // ~perfect window
+            perfectHitbox.SetActive(false);
+            yield return new WaitForSeconds(0.01f);
+        }
+        if (!isstunned)
+        {
+            lateHitbox.SetActive(true);
+            yield return new WaitForSeconds(0.1f); // ~late window
+            lateHitbox.SetActive(false);
+            yield return new WaitForSeconds(0.01f);
+        }
+        if (!isstunned)
+        {
+            missHitbox.SetActive(true); // only if player didn’t respond in time
+            yield return new WaitForSeconds(0.2f);
+            missHitbox.SetActive(false);
+            yield return new WaitForSeconds(0.01f);
+        }
 
-        lateHitbox.SetActive(true);
-        yield return new WaitForSeconds(0.1f); // ~late window
-        lateHitbox.SetActive(false);
-        yield return new WaitForSeconds(0.01f);
-
-        missHitbox.SetActive(true); // only if player didn’t respond in time
-        yield return new WaitForSeconds(0.2f);
-        missHitbox.SetActive(false);
-        yield return new WaitForSeconds(0.01f);
     }
 
     public float GetSongBeatPosition()

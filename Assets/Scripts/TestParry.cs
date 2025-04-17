@@ -9,6 +9,8 @@ public class TestParry : MonoBehaviour
     public bool guardcounter = false;
     public GameObject Enemy;
 
+    public float stunDuration; 
+
     
     // Start is called before the first frame update
     void Start()
@@ -19,43 +21,15 @@ public class TestParry : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
-        if (Enemy.GetComponent<Conductor>().stunduration >= 0.1f)
-        {
-            Enemy.GetComponent<Conductor>().stunduration = 0f;
-            guardcounter = false;
-        }
-
-
-        if (guardcounter)
-        {
-
-
-            
-
-            if (Enemy.GetComponent<Conductor>().hitbox1.activeSelf)
-            {
-                Enemy.GetComponent<Conductor>().hitbox1.SetActive(true);
-            }
-
-            if (Enemy.GetComponent<Conductor>().hitbox2.activeSelf)
-            {
-                Enemy.GetComponent<Conductor>().hitbox2.SetActive(true);
-            }
-
-            
-
-        }
+        
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
+    void OnTriggerEnter2D(Collider2D other)
     {
-        if (collision.gameObject.tag == "Hit" && guardcounter == false)
+        if ((other.CompareTag("Early") || other.CompareTag("Perfect")) && !player.GetComponent<test>().guardcounter)
         {
-            Enemy.GetComponent<Conductor>().anim.Play("blocked");
-            Debug.Log("hit");
-            Enemy.GetComponent<Conductor>().stunduration = 0f;
-            guardcounter = true;
+            Debug.Log("PARRY SUCCESS");
+            player.GetComponent<test>().StartCoroutine("HandleParryStun");
         }
     }
 }

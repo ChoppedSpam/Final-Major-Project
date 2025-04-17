@@ -163,12 +163,33 @@ public class hurtbox : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if(other.gameObject.tag == "Early")
+
+        if (other.gameObject.tag == "Parry" && Player.GetComponent<test>().guardcounter)
+        {
+            Debug.Log("PARRY");
+            Player.GetComponent<test>().hitperfect++;
+            Player.GetComponent<test>().score += 300 * mult;
+            Player.GetComponent<test>().enemyhealth -= 10;
+            Conductor.GetComponent<Conductor>().StartHitReaction();
+            
+            Vector3 vfxPos = Enemy.transform.position + new Vector3(0, 1.5f, 0);
+            GameObject vfx = Instantiate(HitVFXPrefab, vfxPos, Quaternion.identity);
+            Destroy(vfx, 0.3f);
+        }
+
+        if (Player.GetComponent<test>().guardcounter)
+        {
+            Debug.Log("Parry success — ignore enemy damage");
+            return;
+        }
+
+        if (other.gameObject.tag == "Early")
         {
             Debug.Log("EARLY");
             Player.GetComponent<test>().hitearly++;
             Player.GetComponent<test>().score += 100 * mult;
             Player.GetComponent<test>().enemyhealth -= 1;
+            Player.GetComponent<test>().ResetPerfectChain();
             Conductor.GetComponent<Conductor>().StartHitReaction();
             Vector3 vfxPos = Enemy.transform.position + new Vector3(0, 1.5f, 0);
             GameObject vfx = Instantiate(HitVFXPrefab, vfxPos, Quaternion.identity);
@@ -181,6 +202,7 @@ public class hurtbox : MonoBehaviour
             Player.GetComponent<test>().hitlate++;
             Player.GetComponent<test>().score += 100 * mult;
             Player.GetComponent<test>().enemyhealth -= 1;
+            Player.GetComponent<test>().ResetPerfectChain();
             Conductor.GetComponent<Conductor>().StartHitReaction();
             Vector3 vfxPos = Enemy.transform.position + new Vector3(0, 1.5f, 0);
             GameObject vfx = Instantiate(HitVFXPrefab, vfxPos, Quaternion.identity);
@@ -193,11 +215,15 @@ public class hurtbox : MonoBehaviour
             Player.GetComponent<test>().hitperfect++;
             Player.GetComponent<test>().score += 300 * mult;
             Player.GetComponent<test>().enemyhealth -= 5;
+            Player.GetComponent<test>().RegisterPerfect();
             Conductor.GetComponent<Conductor>().StartHitReaction();
             Vector3 vfxPos = Enemy.transform.position + new Vector3(0, 1.5f, 0);
             GameObject vfx = Instantiate(HitVFXPrefab, vfxPos, Quaternion.identity);
             Destroy(vfx, 0.3f);
         }
+
+
+        
     }
 
 
