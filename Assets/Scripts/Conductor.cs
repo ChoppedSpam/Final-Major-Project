@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Conductor : MonoBehaviour
 {
+    public bool pausedExternally = false;
     public float delay = 0;
 
     public GameObject tutorialManagerObject;
@@ -52,6 +53,8 @@ public class Conductor : MonoBehaviour
 
     void Update()
     {
+        if (pausedExternally) return;
+
         delay += Time.deltaTime;
         AnimatorStateInfo state = anim.GetCurrentAnimatorStateInfo(0);
 
@@ -153,6 +156,11 @@ public class Conductor : MonoBehaviour
             if (!beatsToMiss.Contains(i))
                 beatsToMiss.Add(i);
         }
+    }
+
+    public void ResumeAndRecalculateDSPTime()
+    {
+        dspSongTime = (float)AudioSettings.dspTime - songPosition;
     }
 
     public void StartHitReaction()

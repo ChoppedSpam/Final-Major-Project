@@ -31,7 +31,7 @@ public class TutorialManager : MonoBehaviour
 
         inTutorial = true;
         waitingForPunch = true;
-
+        FindObjectOfType<Conductor>().pausedExternally = true;
         tutorialText.text = "Press <color=#FFD700>E</color> to Punch!";
         StartCoroutine(FadeIn());
 
@@ -46,6 +46,7 @@ public class TutorialManager : MonoBehaviour
 
         inTutorial = true;
         waitingForGuard = true;
+        FindObjectOfType<Conductor>().pausedExternally = true;
 
         tutorialText.text = "Press <color=#00BFFF>W</color> to Guard!";
         StartCoroutine(FadeIn());
@@ -70,7 +71,9 @@ public class TutorialManager : MonoBehaviour
     void ResumeGame()
     {
         StartCoroutine(FadeOut());
-
+        Conductor conductor = FindObjectOfType<Conductor>();
+        conductor.ResumeAndRecalculateDSPTime(); //  Reset DSP timer to fix beat jump
+        conductor.pausedExternally = false;
         Time.timeScale = 1f;
         music?.Play();
         if (enemyAnimator != null) enemyAnimator.speed = 1;
