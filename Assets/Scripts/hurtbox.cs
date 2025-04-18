@@ -18,6 +18,7 @@ public class hurtbox : MonoBehaviour
     public GameObject htbox1;
     public GameObject htbox2;
     public GameObject HitVFXPrefab;
+    public GameObject ParryFXPrefab;
     public GameObject StarFlyPrefab;
 
     
@@ -182,15 +183,40 @@ public class hurtbox : MonoBehaviour
 
         if (other.gameObject.tag == "Parry" && Player.GetComponent<test>().guardcounter)
         {
+            
             Debug.Log("PARRY");
             Player.GetComponent<test>().hitperfect++;
             Player.GetComponent<test>().score += 300 * mult;
             Player.GetComponent<test>().enemyhealth -= 10;
             Conductor.GetComponent<Conductor>().StartHitReaction();
-            
+            FindObjectOfType<CameraShake>().Shake(1f, 0.2f);
+            for (int i = 0; i < 4; i++)
+            {
+                Vector3 spawnPos = transform.position;
+                GameObject fx;
+
+                if (i % 2 == 0)
+                    fx = Instantiate(StarFlyPrefab, spawnPos, Quaternion.identity); // Star
+                else
+                    fx = Instantiate(ParryFXPrefab, spawnPos, Quaternion.identity); // New effect
+
+                Rigidbody2D rb = fx.GetComponent<Rigidbody2D>();
+                if (rb != null)
+                {
+                    float angle = Random.Range(20f, 60f) * Mathf.Deg2Rad;
+                    float speed = Random.Range(15f, 20f);
+                    Vector2 dir = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
+                    rb.velocity = dir * speed;
+                    rb.angularVelocity = Random.Range(-360f, 360f);
+                }
+
+                Destroy(fx, 1.5f);
+            }
             Vector3 vfxPos = Enemy.transform.position + new Vector3(0, 1.5f, 0);
             GameObject vfx = Instantiate(HitVFXPrefab, vfxPos, Quaternion.identity);
             Destroy(vfx, 0.3f);
+            this.gameObject.SetActive(false);
+
         }
 
         if (Player.GetComponent<test>().guardcounter)
@@ -204,12 +230,14 @@ public class hurtbox : MonoBehaviour
             Debug.Log("EARLY");
             Player.GetComponent<test>().hitearly++;
             Player.GetComponent<test>().score += 100 * mult;
-            Player.GetComponent<test>().enemyhealth -= 1;
+            Player.GetComponent<test>().enemyhealth -= 2.5f;
             Player.GetComponent<test>().ResetPerfectChain();
             Conductor.GetComponent<Conductor>().StartHitReaction();
+            FindObjectOfType<CameraShake>().Shake(1f, 0.2f);
             Vector3 vfxPos = Enemy.transform.position + new Vector3(0, 1.5f, 0);
             GameObject vfx = Instantiate(HitVFXPrefab, vfxPos, Quaternion.identity);
             Destroy(vfx, 0.3f);
+            this.gameObject.SetActive(false);
         }
 
         if (other.gameObject.tag == "Late")
@@ -217,12 +245,14 @@ public class hurtbox : MonoBehaviour
             Debug.Log("LATE");
             Player.GetComponent<test>().hitlate++;
             Player.GetComponent<test>().score += 100 * mult;
-            Player.GetComponent<test>().enemyhealth -= 1;
+            Player.GetComponent<test>().enemyhealth -= 2.5f;
             Player.GetComponent<test>().ResetPerfectChain();
             Conductor.GetComponent<Conductor>().StartHitReaction();
+            FindObjectOfType<CameraShake>().Shake(1f, 0.2f);
             Vector3 vfxPos = Enemy.transform.position + new Vector3(0, 1.5f, 0);
             GameObject vfx = Instantiate(HitVFXPrefab, vfxPos, Quaternion.identity);
             Destroy(vfx, 0.3f);
+            this.gameObject.SetActive(false);
         }
 
         if (other.gameObject.tag == "Perfect")
@@ -233,14 +263,15 @@ public class hurtbox : MonoBehaviour
             Player.GetComponent<test>().enemyhealth -= 5;
             Player.GetComponent<test>().RegisterPerfect();
             Conductor.GetComponent<Conductor>().StartHitReaction();
+            FindObjectOfType<CameraShake>().Shake(1f, 0.2f);
             Vector3 vfxPos = Enemy.transform.position + new Vector3(0, 1.5f, 0);
             GameObject vfx = Instantiate(HitVFXPrefab, vfxPos, Quaternion.identity);
             Destroy(vfx, 0.3f);
+            this.gameObject.SetActive(false);
         }
-
-
-        
     }
+
+    
 
 
 

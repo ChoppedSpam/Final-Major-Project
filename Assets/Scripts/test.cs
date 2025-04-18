@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using static hurtbox;
 
 public class test : MonoBehaviour
 {
@@ -28,6 +29,9 @@ public class test : MonoBehaviour
     public GameObject EnemyPortrait3;
     public RectTransform tugOfWarFill;
     public RectTransform tugOfWarFillHeart;
+    public float lastTugX = 0f;
+    public float barFlashThreshold = 30f; // How far must the bar jump to flash
+    public RectTransform tugFlashTarget;
     public float maxOffset = 870f;
     private float targetX = 0f;
     private float lerpSpeed = 8f;
@@ -74,8 +78,20 @@ public class test : MonoBehaviour
 
     private bool isHit = false;
     public bool guardcounter = false;
+    public float dashCooldown = 0.6f;
+    private float dashTimer = 0f;
+    private bool isDashing = false;
+    public bool isInvincible = false;
+    public bool canPunch = true;
 
-    
+
+    private Vector3 originalPosition;
+
+    public GameObject[] dashCloudPrefabs;
+    public Transform dashCloudSpawnPoint;
+    private int currentCloudIndex = 0;
+
+
 
     private CameraShake cameraShake; // Reference to CameraShake script
 
@@ -83,6 +99,7 @@ public class test : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        originalPosition = transform.position;
         enemyhealth = 100f;
         playerhealth = 100f;
 
@@ -99,6 +116,8 @@ public class test : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        dashTimer += Time.deltaTime;
+
         if (playerhealth >= 50)
         {
             PlayerPortrait.SetActive(true);
@@ -152,12 +171,22 @@ public class test : MonoBehaviour
         }
 
 
-        float totalHealth = playerhealth + enemyhealth;
-        float balance = playerhealth / totalHealth; // value from 0.0 to 1.0
+        float totalHealth = Mathf.Max(playerhealth + enemyhealth, 1f); // Prevent divide by zero
+        float balance = Mathf.Clamp01(playerhealth / totalHealth);
         targetX = Mathf.Lerp(-maxOffset, maxOffset, balance);
-        // Apply this to tug-of-war UI
         Vector2 anchoredPos = tugOfWarFill.anchoredPosition;
+
+        float deltaX = Mathf.Abs(targetX - lastTugX);
+
+        if (deltaX > barFlashThreshold)
+        {
+            StartCoroutine(TugFlashPop());
+        }
+
         anchoredPos.x = Mathf.Lerp(anchoredPos.x, targetX, Time.deltaTime * lerpSpeed);
+        lastTugX = anchoredPos.x;
+
+        lastTugX = anchoredPos.x;
         tugOfWarFill.anchoredPosition = anchoredPos;
         tugOfWarFillHeart.anchoredPosition = anchoredPos;
 
@@ -191,9 +220,11 @@ public class test : MonoBehaviour
         htboxtimer += Time.deltaTime;
         htboxtimer2 += Time.deltaTime;
 
+        Animator enemyAnim = conductor.GetComponent<Conductor>().anim;
+        AnimatorStateInfo enemyState = enemyAnim.GetCurrentAnimatorStateInfo(0);
 
         // Attack input
-        if (Input.GetKeyDown(KeyCode.E) && htboxtimer >= 0.22f)
+        if (Input.GetKeyDown(KeyCode.E) && canPunch && htboxtimer >= 0.22f && !anim.GetCurrentAnimatorStateInfo(0).IsName("StarGetHurt") && !enemyState.IsName("kick"))
         {
             float currentBeat = conductor.GetComponent<Conductor>().GetSongBeatPosition();
             timepressed = currentBeat + inputOffset;
@@ -204,17 +235,23 @@ public class test : MonoBehaviour
             anim.Play("Punch");
             htboxtimer = 0;
             htbox1.SetActive(true);
-            StartCoroutine(DisableHitboxAfterDelay(htbox1, 0.05f));
+            StartCoroutine(DisableHitboxAfterDelay(htbox1, 0.025f));
             oldscore = score;
         }
 
 
-        if (Input.GetKeyDown(KeyCode.W) && htboxtimer2 >= 0.11f)
+        if (Input.GetKeyDown(KeyCode.W) && htboxtimer2 >= 0.11f && !anim.GetCurrentAnimatorStateInfo(0).IsName("StarGetHurt"))
         {
             anim.Play("Guard");
+            
             htboxtimer2 = 0;
             htbox2.SetActive(true);
             StartCoroutine(DisableHitboxAfterDelay(htbox2, 0.15f));
+        }
+
+        if (Input.GetKeyDown(KeyCode.A) && dashTimer >= dashCooldown && !isDashing)
+        {
+            StartCoroutine(DashBack());
         }
 
 
@@ -225,7 +262,7 @@ public class test : MonoBehaviour
             if (score == oldscore && score != 0) // If no score change, player missed
             {
                 miss++;
-                playerhealth -= 5;
+                playerhealth -= 2.5f;
                 combo = 0;
                 oldscore = 0;
                 htbox1.SetActive(false);
@@ -241,7 +278,7 @@ public class test : MonoBehaviour
                 // **Trigger Camera Shake on a successful hit**
                 if (cameraShake != null)
                 {
-                    cameraShake.ShakeCamera(0.05f, 0.05f);
+                    
                 }
             }
 
@@ -257,7 +294,7 @@ public class test : MonoBehaviour
         {
             if (cameraShake != null)
             {
-                cameraShake.ShakeCamera(0.05f, 0.05f);
+                
             }
             //conductor.GetComponent<Conductor>().anim.Play("blocked");
             htbox2.GetComponent<TestParry>().guardcounter = false;
@@ -275,14 +312,17 @@ public class test : MonoBehaviour
         {
             Animator playerAnim = Player.GetComponent<test>().anim;
 
+
+            isHit = true;
+            playerAnim.Play("StarGetHit", 0, 0f);
+            Player.GetComponent<test>().ResetPerfectChain();
+            Player.GetComponent<test>().miss++;
+            StartCoroutine(ResetHit());
+
             // Check if player is not punching
             if (!playerAnim.GetCurrentAnimatorStateInfo(0).IsName("Punch"))
-            {  
-                isHit = true;
-                playerAnim.Play("StarGetHit", 0, 0f);
-                Player.GetComponent<test>().ResetPerfectChain();
-                Player.GetComponent<test>().miss++;
-                StartCoroutine(ResetHit());
+            {
+                
             }
         }
     }
@@ -305,6 +345,7 @@ public class test : MonoBehaviour
     {
         if (parryCharges <= 0)
             yield break; // No charges available
+        conductor.GetComponent<ParryEffectManager>().ShowParryPopup();
 
         parryCharges--;
         UpdateParryUI();
@@ -349,4 +390,91 @@ public class test : MonoBehaviour
     {
         perfectChain = 0;
     }
+
+    IEnumerator DashBack()
+    {
+        isDashing = true;
+        dashTimer = 0f;
+        isInvincible = true;
+
+        float invincibilityTime = 0.6f;
+        StartCoroutine(ResetInvincibility(invincibilityTime));
+
+        if (dashCloudPrefabs.Length > 0)
+        {
+            GameObject fx = Instantiate(
+                dashCloudPrefabs[currentCloudIndex],
+                dashCloudSpawnPoint.position,
+                Quaternion.identity
+            );
+
+            // Scale up the cloud (adjust size to taste)
+            fx.transform.localScale = Vector3.one * 0.9f;
+
+            // Add a bit of random rotation (e.g. -15 to +15 degrees)
+            float randomZRotation = Random.Range(-15f, 15f);
+            fx.transform.Rotate(0f, 0f, randomZRotation);
+
+            Destroy(fx, 0.2f);
+
+            // Move to next cloud in cycle
+            currentCloudIndex = (currentCloudIndex + 1) % dashCloudPrefabs.Length;
+        }
+        anim.Play("Guard");
+
+        float dashDistance = 1.5f;
+        float dashSpeed = 10f;
+        Vector3 dashTarget = originalPosition - new Vector3(dashDistance, 0, 0);
+
+        float t = 0f;
+        Vector3 start = transform.position;
+
+        // Dash backward
+        while (t < 1f)
+        {
+            t += Time.deltaTime * dashSpeed;
+            transform.position = Vector3.Lerp(start, dashTarget, t);
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(0.1f);
+
+        // Return to original position
+        t = 0f;
+        start = transform.position;
+
+        while (t < 1f)
+        {
+            t += Time.deltaTime * (dashSpeed / 2f);
+            transform.position = Vector3.Lerp(start, originalPosition, t);
+            yield return null;
+        }
+
+        isDashing = false;
+    }
+    IEnumerator ResetInvincibility(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        isInvincible = false;
+    }
+
+    IEnumerator TugFlashPop()
+    {
+        if (tugFlashTarget == null) yield break;
+
+        Vector3 originalScale = tugFlashTarget.localScale;
+        Vector3 popScale = originalScale * 1.15f; // slightly less dramatic
+
+        float t = 0f;
+        while (t < 1f)
+        {
+            t += Time.unscaledDeltaTime * 10f; // uses unscaled time for consistent feel
+            tugFlashTarget.localScale = Vector3.Lerp(popScale, originalScale, t);
+            yield return null;
+        }
+
+        tugFlashTarget.localScale = originalScale;
+    }
+
+
 }

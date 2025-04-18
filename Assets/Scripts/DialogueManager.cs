@@ -32,7 +32,6 @@ public class DialogueManager : MonoBehaviour
 
     public float typeSpeed = 0.03f;
 
-    private int currentLine = 0;
     private bool isTyping = false;
 
     void Start()
@@ -40,12 +39,15 @@ public class DialogueManager : MonoBehaviour
         Time.timeScale = 0f;
 
         conductor.musicSource.Stop();
-        enemyAnimator.speed = 0f;
+        conductor.pausedExternally = true;
         conductor.enabled = false;
+        enemyAnimator.speed = 0f;
+        music?.Pause();
 
         gameplayUIGroup.SetActive(false);
         fightGraphic.SetActive(false);
         dialoguePanel.SetActive(true);
+
         StartCoroutine(PlayDialogue());
     }
 
@@ -53,8 +55,7 @@ public class DialogueManager : MonoBehaviour
     {
         foreach (DialogueLine line in dialogueLines)
         {
-
-            // Switch camera
+            // Switch portrait and camera
             if (line.isPlayerTalking)
             {
                 portraitPlayer.SetActive(true);
@@ -73,11 +74,11 @@ public class DialogueManager : MonoBehaviour
             // Type text
             yield return StartCoroutine(TypeSentence(line.text));
 
-            // Wait for input to continue
+            // Wait for space to continue
             yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
         }
 
-        // End Dialogue FIGHT Graphic
+        // End Dialogue Show fight graphic
         dialoguePanel.SetActive(false);
         StartCoroutine(ShowFightGraphic());
     }
@@ -89,7 +90,7 @@ public class DialogueManager : MonoBehaviour
         foreach (char c in sentence)
         {
             dialogueText.text += c;
-            yield return new WaitForSecondsRealtime(typeSpeed); // works even with timescale = 0
+            yield return new WaitForSecondsRealtime(typeSpeed);
         }
         isTyping = false;
     }
@@ -98,9 +99,8 @@ public class DialogueManager : MonoBehaviour
     {
         main.Priority = 12;
         fightGraphic.SetActive(true);
-
-        // Optional zoom-in effect
         fightGraphic.transform.localScale = Vector3.zero;
+
         float t = 0f;
         while (t < 1f)
         {
@@ -111,14 +111,36 @@ public class DialogueManager : MonoBehaviour
 
         yield return new WaitForSecondsRealtime(1.5f);
         fightGraphic.SetActive(false);
-        music?.Play();
-        conductor.enabled = true;
-        enemyAnimator.speed = 1f;
-        conductor.musicSource.Play();
-        gameplayUIGroup.SetActive(true);
 
-        // Start the game!
+        StartCoroutine(FadeInUIAndStartGame());
+    }
+
+    IEnumerator FadeInUIAndStartGame()
+    {
+        CanvasGroup group = gameplayUIGroup.GetComponent<CanvasGroup>();
+        if (group == null)
+        {
+            group = gameplayUIGroup.AddComponent<CanvasGroup>();
+            group.alpha = 0f;
+        }
+
+        gameplayUIGroup.SetActive(true);
+        float t = 0f;
+
+        while (group.alpha < 1f)
+        {
+            t += Time.unscaledDeltaTime * 1.5f;
+            group.alpha = Mathf.Lerp(0f, 1f, t);
+            yield return null;
+        }
+
+        // RESUME FULL GAME
         Time.timeScale = 1f;
-        FindObjectOfType<Conductor>().enabled = true;
+        music?.Play();
+        enemyAnimator.speed = 1f;
+
+        conductor.ResumeAndRecalculateDSPTime();
+        conductor.pausedExternally = false;
+        conductor.enabled = true;
     }
 }

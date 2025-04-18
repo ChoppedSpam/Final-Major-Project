@@ -11,24 +11,13 @@ public class TestParry : MonoBehaviour
 
     public float stunDuration; 
 
-    
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     void OnTriggerEnter2D(Collider2D other)
     {
         if ((other.CompareTag("Early") || other.CompareTag("Perfect")) && !player.GetComponent<test>().guardcounter)
         {
             Debug.Log("PARRY SUCCESS");
+
             player.GetComponent<test>().StartCoroutine("HandleParryStun");
         }
     }

@@ -1,36 +1,42 @@
 using System.Collections;
 using UnityEngine;
+using Cinemachine;
 
 public class CameraShake : MonoBehaviour
 {
-    public float shakeDuration = 0.025f;  // Duration of the shake
-    public float shakeMagnitude = 0.01f; // Strength of the shake
-    private Vector3 originalPosition;
+    public CinemachineVirtualCamera vcam;
+    private CinemachineBasicMultiChannelPerlin noise;
+    private float shakeDuration = 0f;
+    private float shakeAmplitude = 2f;
+    private float shakeFrequency = 2f;
 
     void Start()
     {
-        originalPosition = transform.localPosition;
+        noise = vcam.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
     }
 
-    public void ShakeCamera(float duration, float magnitude)
+    public void Shake(float intensity = 1f, float time = 0.2f)
     {
-        shakeDuration = duration;
-        shakeMagnitude = magnitude;
-        StartCoroutine(Shake());
-    }
+        shakeAmplitude = intensity;
+        shakeDuration = time;
 
-    IEnumerator Shake()
-    {
-        float elapsed = 0f;
-
-        while (elapsed < shakeDuration)
+        if (noise != null)
         {
-            Vector3 randomShake = originalPosition + (Random.insideUnitSphere * shakeMagnitude);
-            transform.localPosition = new Vector3(randomShake.x, randomShake.y, originalPosition.z);
-            elapsed += Time.deltaTime;
-            yield return null;
+            noise.m_AmplitudeGain = shakeAmplitude;
+            noise.m_FrequencyGain = shakeFrequency;
         }
 
-        transform.localPosition = originalPosition; // Reset camera position
+        StopAllCoroutines();
+        StartCoroutine(ResetShake());
+    }
+
+    IEnumerator ResetShake()
+    {
+        yield return new WaitForSecondsRealtime(shakeDuration);
+        if (noise != null)
+        {
+            noise.m_AmplitudeGain = 0f;
+            noise.m_FrequencyGain = 0f;
+        }
     }
 }

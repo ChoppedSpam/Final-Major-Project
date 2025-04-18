@@ -10,6 +10,8 @@ public class Conductor : MonoBehaviour
     public GameObject tutorialManagerObject;
     private bool guardTutorialTriggered = false;
     private bool tutorialTriggered = false;
+    private bool counterTutorialTriggered = false;
+    private bool dashTutorialTriggered = false;
     public List<int> kickBeats;
     public List<int> beatsToMiss;
 
@@ -33,6 +35,7 @@ public class Conductor : MonoBehaviour
     public bool isAttacking = false;
     public bool inHitReaction = false;
     public bool isstunned = false;
+    public bool isKicking;
 
     public int beatRoundedUp;
 
@@ -99,6 +102,20 @@ public class Conductor : MonoBehaviour
             tutorialManagerObject.GetComponent<TutorialManager>().TriggerGuardTutorial();
             return;
         }
+
+        if (!counterTutorialTriggered && songPositionInBeats >= 11.02f)
+        {
+            counterTutorialTriggered = true;
+            tutorialManagerObject.GetComponent<TutorialManager>().TriggerCounterTutorial();
+            return;
+        }
+
+        if (beatRounded == 17 && !dashTutorialTriggered)
+        {
+            dashTutorialTriggered = true;
+            tutorialManagerObject.GetComponent<TutorialManager>().TriggerDashTutorial();
+            return;
+        }
         lastBeat = beatRounded;
 
         beatRoundedUp = Mathf.RoundToInt(lastBeat + 1f);
@@ -135,6 +152,8 @@ public class Conductor : MonoBehaviour
 
     IEnumerator ActivateHitboxKick()
     {
+        if (inHitReaction) yield break;
+
         yield return new WaitForSeconds(0.2f); // delay before hitbox appears
         hitboxKick.SetActive(true);
         yield return new WaitForSeconds(0.3f); // active time
@@ -172,6 +191,8 @@ public class Conductor : MonoBehaviour
 
     IEnumerator HitReactionRoutine()
     {
+        hitbox1.SetActive(false);
+        hitboxKick.SetActive(false);
         inHitReaction = true;
         stunduration = 0f;
 
@@ -198,10 +219,17 @@ public class Conductor : MonoBehaviour
 
             Destroy(star, 1.5f);
         }
+        if (hitbox1.activeSelf == true)
+        {
+            hitbox1.SetActive(false);
+            hitboxKick.SetActive(false);
+        }
 
         yield return new WaitForSeconds(0.2f);
 
         inHitReaction = false;
+
+        
     }
 
     IEnumerator PlayEnemyAnimationEarly(float delay, int beat)
@@ -220,11 +248,13 @@ public class Conductor : MonoBehaviour
 
             if (kickBeats.Contains(beat))
             {
+                isKicking = true;
                 anim.Play("kick", 0, 0f);
                 StartCoroutine(ActivateHitboxKick());
             }
             else
             {
+                isKicking = false;
                 anim.Play("hit1", 0, 0f);
                 StartCoroutine(ActivateJudgmentHitboxes());
             }
@@ -233,38 +263,35 @@ public class Conductor : MonoBehaviour
 
     IEnumerator ActivateJudgmentHitboxes()
     {
-        if (!isstunned)
-        {
-            yield return new WaitForSeconds(0.15f);
-            earlyHitbox.SetActive(true);
-            yield return new WaitForSeconds(0.1f); // ~early window
-            earlyHitbox.SetActive(false);
-            yield return new WaitForSeconds(0.01f);
-        }
+        // Delay before early
+        yield return new WaitForSeconds(0.15f);
 
-        if(!isstunned)
-        {
-            perfectHitbox.SetActive(true);
-            yield return new WaitForSeconds(0.1f); // ~perfect window
-            perfectHitbox.SetActive(false);
-            yield return new WaitForSeconds(0.01f);
-        }
-        if (!isstunned)
-        {
-            lateHitbox.SetActive(true);
-            yield return new WaitForSeconds(0.1f); // ~late window
-            lateHitbox.SetActive(false);
-            yield return new WaitForSeconds(0.01f);
-        }
-        if (!isstunned)
-        {
-            missHitbox.SetActive(true); // only if player didn’t respond in time
-            yield return new WaitForSeconds(0.2f);
-            missHitbox.SetActive(false);
-            yield return new WaitForSeconds(0.01f);
-        }
+        if (inHitReaction || isstunned) yield break;
+        earlyHitbox.SetActive(true);
+        yield return new WaitForSeconds(0.08f);
+        earlyHitbox.SetActive(false);
+        yield return new WaitForSeconds(0.01f);
 
+        if (inHitReaction || isstunned) yield break;
+        perfectHitbox.SetActive(true);
+        yield return new WaitForSeconds(0.1f);
+        perfectHitbox.SetActive(false);
+        yield return new WaitForSeconds(0.01f);
+
+        if (inHitReaction || isstunned) yield break;
+        lateHitbox.SetActive(true);
+        yield return new WaitForSeconds(0.1f);
+        lateHitbox.SetActive(false);
+        yield return new WaitForSeconds(0.01f);
+
+        if (inHitReaction || isstunned) yield break;
+        FindObjectOfType<test>().canPunch = false;
+        missHitbox.SetActive(true);
+        yield return new WaitForSeconds(0.2f);
+        missHitbox.SetActive(false);
+        FindObjectOfType<test>().canPunch = true;
     }
+
 
     public float GetSongBeatPosition()
     {

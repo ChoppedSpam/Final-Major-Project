@@ -20,6 +20,8 @@ public class TutorialManager : MonoBehaviour
     public bool inTutorial = false;
     private bool waitingForPunch = false;
     private bool waitingForGuard = false;
+    private bool waitingForCounter = false;
+    private bool waitingForDash = false;
 
     void Awake()
     {
@@ -57,19 +59,58 @@ public class TutorialManager : MonoBehaviour
         if (enemyAnimator != null) enemyAnimator.speed = 0;
     }
 
+    public void TriggerCounterTutorial()
+    {
+        if (inTutorial) return;
+
+        inTutorial = true;
+        waitingForCounter = true;
+        FindObjectOfType<Conductor>().pausedExternally = true;
+
+        tutorialText.text = "Press <color=#FFD700>E</color> to counterattack!";
+        StartCoroutine(FadeIn());
+
+        Time.timeScale = 0f;
+        music?.Pause();
+        if (enemyAnimator != null) enemyAnimator.speed = 0;
+    }
+
+    public void TriggerDashTutorial()
+    {
+        if (inTutorial) return;
+
+        inTutorial = true;
+        waitingForDash = true;
+        FindObjectOfType<Conductor>().pausedExternally = true;
+
+        tutorialText.text = "Press <color=#FF69B4>A</color> to Dodge the Kick!";
+        StartCoroutine(FadeIn());
+
+        Time.timeScale = 0f;
+        music?.Pause();
+        if (enemyAnimator != null) enemyAnimator.speed = 0;
+    }
+
     void Update()
     {
         if (waitingForPunch && Input.GetKeyDown(KeyCode.E))
         {
-            ResumeGame();
+            ResumeGame1();
         }
         if (waitingForGuard && Input.GetKeyDown(KeyCode.W))
         {
             ResumeGame();
         }
+        if (waitingForCounter && Input.GetKeyDown(KeyCode.E))
+        {
+            ResumeGameCompletely();
+        }
+        if (waitingForDash && Input.GetKeyDown(KeyCode.A))
+        {
+            ResumeGameCompletely(); // reuse the same fade/resume logic
+        }
     }
-
-    void ResumeGame()
+    void ResumeGame1()
     {
         StartCoroutine(FadeOut());
         Conductor conductor = FindObjectOfType<Conductor>();
@@ -82,21 +123,65 @@ public class TutorialManager : MonoBehaviour
         inTutorial = false;
         waitingForPunch = false;
         waitingForGuard = false;
+        waitingForCounter = false;
+        waitingForDash = false;
+    }
+
+    void ResumeGame()
+    {
+        
+        Conductor conductor = FindObjectOfType<Conductor>();
+        conductor.ResumeAndRecalculateDSPTime(); //  Reset DSP timer to fix beat jump
+        conductor.pausedExternally = false;
+        Time.timeScale = 1f;
+        music?.Play();
+        if (enemyAnimator != null) enemyAnimator.speed = 1;
+
+        inTutorial = false;
+        waitingForPunch = false;
+        waitingForGuard = false;
+        waitingForCounter = false;
+        waitingForDash = false;
+    }
+
+    void ResumeGameCompletely()
+    {
+        StartCoroutine(FadeOut());
+        Conductor conductor = FindObjectOfType<Conductor>();
+        conductor.ResumeAndRecalculateDSPTime(); //  Reset DSP timer to fix beat jump
+        conductor.pausedExternally = false;
+        Time.timeScale = 1f;
+        music?.Play();
+        if (enemyAnimator != null) enemyAnimator.speed = 1;
+
+        inTutorial = false;
+        waitingForPunch = false;
+        waitingForGuard = false;
+        waitingForCounter = false;
+        waitingForDash = false;
     }
 
     IEnumerator FadeIn()
     {
-        tutorialPopup.SetActive(true);
+        tutorialPopup.SetActive(true); 
+        if (!tutorialGroup.gameObject.activeSelf)
+            tutorialGroup.gameObject.SetActive(true);
+
         tutorialGroup.alpha = 0f;
 
-        while (tutorialGroup.alpha < 1f)
+        float duration = 0.4f;  // Duration of the fade
+        float t = 0f;
+
+        while (t < 1f)
         {
-            tutorialGroup.alpha += Time.unscaledDeltaTime * 2f;
+            t += Time.unscaledDeltaTime / duration;
+            tutorialGroup.alpha = Mathf.Lerp(0f, 1f, t);
             yield return null;
         }
 
-        tutorialGroup.alpha = 1f;
+        tutorialGroup.alpha = 1f;  // Force max alpha
     }
+
 
     IEnumerator FadeOut()
     {
