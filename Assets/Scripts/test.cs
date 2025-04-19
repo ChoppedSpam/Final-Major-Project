@@ -7,6 +7,7 @@ using static hurtbox;
 
 public class test : MonoBehaviour
 {
+
     public float inputOffset = 0.05f;
     public float timingDiff;
     public float timepressed = -1f;
@@ -98,6 +99,10 @@ public class test : MonoBehaviour
     public TMP_Text ScoreSpriteText;
     public TMP_Text ComboSpriteText;
     public TMP_SpriteAsset numberSpriteAsset;
+    public DigitDisplay scoreDisplay;
+    public DigitDisplay comboDisplay;
+
+    private bool hasRevived = false;
 
 
     public string GetSpriteScoreText(int value)
@@ -145,6 +150,12 @@ public class test : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (enemyhealth <= 0 && !hasRevived)
+        {
+            hasRevived = true;
+            conductor.GetComponent<Conductor>().anim.Play("death");
+        }
+
         if (ScoreSpriteText.spriteAsset != numberSpriteAsset)
         {
             ScoreSpriteText.spriteAsset = numberSpriteAsset;
@@ -158,6 +169,10 @@ public class test : MonoBehaviour
         ComboSpriteText.spriteAsset = numberSpriteAsset;
         ComboSpriteText.text = GetSpriteComboText((int)score);
         dashTimer += Time.deltaTime;
+
+        scoreDisplay.SetNumber((int)score);
+        comboDisplay.SetNumber((int)combo);
+
 
         if (playerhealth >= 50)
         {
@@ -182,11 +197,11 @@ public class test : MonoBehaviour
         if (playerhealth <= 0 && dead == false)
         {
             anim.Play("stardie");
-            anim.Play("stardie", 1);
+            StartCoroutine(FreezeOnDeath());
             dead = true;
         }
 
-        if(dead == true)
+        if (dead == true)
         {
             deadone.GetComponent<SpriteRenderer>().sprite = deadasl;
         }
@@ -349,7 +364,7 @@ public class test : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Hit" && !isHit)
+        if (collision.gameObject.tag == "Hit" && !isHit && !isInvincible)
         {
             Animator playerAnim = Player.GetComponent<test>().anim;
 
@@ -357,6 +372,7 @@ public class test : MonoBehaviour
             isHit = true;
             playerAnim.Play("StarGetHit", 0, 0f);
             Player.GetComponent<test>().ResetPerfectChain();
+            combo = 0;
             Player.GetComponent<test>().miss++;
             StartCoroutine(ResetHit());
 
@@ -518,5 +534,42 @@ public class test : MonoBehaviour
         tugFlashTarget.localScale = originalScale;
     }
 
+    IEnumerator FreezeOnDeath()
+    {
+        // Wait for the animation to finish
+        yield return new WaitForSeconds(anim.GetCurrentAnimatorStateInfo(0).length);
+
+        // Then freeze the pose
+        anim.enabled = false;
+    }
+
+    IEnumerator HandleEnemyRevival()
+    {
+        // 2. Check if song is still playing
+        AudioSource music = conductor.GetComponent<Conductor>().musicSource;
+        if (music != null && music.time < music.clip.length - 1f)
+        {
+            conductor.GetComponent<Conductor>().anim.Play("death");
+            yield return new WaitForSeconds(1f);
+
+            // Disable hitboxes and attacks
+            conductor.GetComponent<Conductor>().pausedExternally = true;
+
+
+
+            yield return new WaitForSeconds(2.5f); // Wait before revival
+
+            // Play get-up animation
+            conductor.GetComponent<Conductor>().anim.Play("getup");
+
+            yield return new WaitForSeconds(1.2f); // Time for getup animation
+
+            // Reset health and resume
+            enemyhealth = 100f;
+            playerhealth = 100f;
+            conductor.GetComponent<Conductor>().pausedExternally = false;
+            
+        }
+    }
 
 }

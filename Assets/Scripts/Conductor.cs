@@ -45,8 +45,12 @@ public class Conductor : MonoBehaviour
     public GameObject missHitbox;
     public GameObject parryHitbox;
 
+    private Vector3 enemyOriginalPosition;
+
+
     void Start()
     {
+        enemyOriginalPosition = tutorialManagerObject.transform.position;
         AddBeatRangeToMiss(0, 2);
         AddBeatRangeToMiss(6, 8);
         secPerBeat = 60f / songBpm;
@@ -61,19 +65,16 @@ public class Conductor : MonoBehaviour
         delay += Time.deltaTime;
         AnimatorStateInfo state = anim.GetCurrentAnimatorStateInfo(0);
 
-        if (inHitReaction && !isAttacking && state.IsName("idle") && stunduration > 2.5f)
+        if (inHitReaction && !isAttacking && state.IsName("idle") && stunduration > 2.5f && GetComponent<test>().enemyhealth > 0f)
         {
             Debug.LogWarning("SafetyNet triggered: reset full enemy state");
-
             inHitReaction = false;
             isAttacking = false;
             stunduration = 0f;
-
-            // Force reset animator to idle, in case it's still mid-blend or stuck
             anim.Play("idle", 0, 0f);
-
-            
         }
+
+        
 
         stunduration += Time.deltaTime;
 
@@ -154,9 +155,9 @@ public class Conductor : MonoBehaviour
     {
         if (inHitReaction) yield break;
 
-        yield return new WaitForSeconds(0.2f); // delay before hitbox appears
+        yield return new WaitForSeconds(0.3f); // delay before hitbox appears
         hitboxKick.SetActive(true);
-        yield return new WaitForSeconds(0.3f); // active time
+        yield return new WaitForSeconds(0.2f); // active time
         hitboxKick.SetActive(false);
         yield return new WaitForSeconds(0.2f); // cooldown
         isAttacking = false;
@@ -251,6 +252,7 @@ public class Conductor : MonoBehaviour
                 isKicking = true;
                 anim.Play("kick", 0, 0f);
                 StartCoroutine(ActivateHitboxKick());
+                StartCoroutine(KickStepBack());
             }
             else
             {
@@ -290,6 +292,42 @@ public class Conductor : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
         missHitbox.SetActive(false);
         FindObjectOfType<test>().canPunch = true;
+    }
+
+    IEnumerator KickStepBack()
+    {
+        float dashDistance = 2f;        // Smaller movement for polish
+        float dashDuration = 0.35f;        // Duration of step back
+        float returnDuration = 0.2f;      // Slower return
+
+        Vector3 backPosition = enemyOriginalPosition + new Vector3(dashDistance, 0f, 0f); // RIGHT movement
+
+        float t = 0f;
+        Vector3 start = tutorialManagerObject.transform.position;
+
+        // Step back
+        while (t < 1f)
+        {
+            t += Time.deltaTime / dashDuration;
+            tutorialManagerObject.transform.position = Vector3.Lerp(start, backPosition, t);
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(0.1f); // small pause
+
+        // Return
+        t = 0f;
+        start = tutorialManagerObject.transform.position;
+
+        while (t < 1f)
+        {
+            t += Time.deltaTime / returnDuration;
+            tutorialManagerObject.transform.position = Vector3.Lerp(start, enemyOriginalPosition, t);
+            yield return null;
+        }
+
+        // Snap to original just in case
+        tutorialManagerObject.transform.position = enemyOriginalPosition;
     }
 
 
