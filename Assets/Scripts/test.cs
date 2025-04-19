@@ -95,10 +95,39 @@ public class test : MonoBehaviour
 
     private CameraShake cameraShake; // Reference to CameraShake script
 
+    public TMP_Text ScoreSpriteText;
+    public TMP_Text ComboSpriteText;
+    public TMP_SpriteAsset numberSpriteAsset;
+
+
+    public string GetSpriteScoreText(int value)
+    {
+        string result = "";
+        foreach (char c in value.ToString())
+        {
+            int index = int.Parse(c.ToString());
+            result += $"<sprite index={index}>";  // Use index here
+        }
+        return result;
+    }
+
+    public string GetSpriteComboText(int value)
+    {
+        string result = "";
+        foreach (char c in value.ToString())
+        {
+            int index = int.Parse(c.ToString());
+            result += $"<sprite index={index}>";  // Use index here
+        }
+        return result;
+    }
+
 
     // Start is called before the first frame update
     void Start()
     {
+        
+
         originalPosition = transform.position;
         enemyhealth = 100f;
         playerhealth = 100f;
@@ -116,6 +145,18 @@ public class test : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (ScoreSpriteText.spriteAsset != numberSpriteAsset)
+        {
+            ScoreSpriteText.spriteAsset = numberSpriteAsset;
+        }
+        if (ComboSpriteText.spriteAsset != numberSpriteAsset)
+        {
+            ComboSpriteText.spriteAsset = numberSpriteAsset;
+        }
+        ScoreSpriteText.spriteAsset = numberSpriteAsset;
+        ScoreSpriteText.text = GetSpriteScoreText((int)score);
+        ComboSpriteText.spriteAsset = numberSpriteAsset;
+        ComboSpriteText.text = GetSpriteComboText((int)score);
         dashTimer += Time.deltaTime;
 
         if (playerhealth >= 50)
@@ -463,15 +504,16 @@ public class test : MonoBehaviour
         if (tugFlashTarget == null) yield break;
 
         Vector3 originalScale = tugFlashTarget.localScale;
-        Vector3 popScale = originalScale * 1.15f; // slightly less dramatic
+        Vector3 popScale = Vector3.Min(originalScale * 1.15f, new Vector3(1.2f, 1.2f, 1f)); // Cap max
 
         float t = 0f;
         while (t < 1f)
         {
-            t += Time.unscaledDeltaTime * 10f; // uses unscaled time for consistent feel
+            t += Time.unscaledDeltaTime * 10f;
             tugFlashTarget.localScale = Vector3.Lerp(popScale, originalScale, t);
             yield return null;
         }
+
 
         tugFlashTarget.localScale = originalScale;
     }
