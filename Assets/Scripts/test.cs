@@ -150,11 +150,12 @@ public class test : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (enemyhealth <= 0 && !hasRevived)
+        /*if (enemyhealth <= 0 && !hasRevived)
         {
             hasRevived = true;
             conductor.GetComponent<Conductor>().anim.Play("death");
-        }
+            StartCoroutine(HandleEnemyRevival());
+        }*/
 
         if (ScoreSpriteText.spriteAsset != numberSpriteAsset)
         {

@@ -557,6 +557,7 @@ MonoBehaviour:
   StarFlyPrefab: {fileID: 7931372730975506992, guid: afbef05aca143e44fb147781c92673c1, type: 3}
   anim: {fileID: 2117003253}
   hitbox1: {fileID: 806381842}
+  player: {fileID: 352777616}
   hitboxKick: {fileID: 1610378367}
   songBpm: 100
   musicSource: {fileID: 151706800}

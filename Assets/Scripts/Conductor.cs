@@ -22,6 +22,7 @@ public class Conductor : MonoBehaviour
 
     public Animator anim;
     public GameObject hitbox1;
+    public GameObject player;
     public GameObject hitboxKick;
     public float songBpm;
     public AudioSource musicSource;
@@ -47,6 +48,8 @@ public class Conductor : MonoBehaviour
 
     private Vector3 enemyOriginalPosition;
 
+    private bool hasDied = false;
+    private bool hasRevived = false;
 
     void Start()
     {
@@ -61,6 +64,13 @@ public class Conductor : MonoBehaviour
     void Update()
     {
         if (pausedExternally) return;
+
+        if (player.GetComponent<test>().enemyhealth <= 0 && !hasDied)
+        {
+            hasDied = true;
+            StartCoroutine(HandleEnemyDeath());
+            return; // Prevent further animation this frame
+        }
 
         delay += Time.deltaTime;
         AnimatorStateInfo state = anim.GetCurrentAnimatorStateInfo(0);
@@ -328,6 +338,31 @@ public class Conductor : MonoBehaviour
 
         // Snap to original just in case
         tutorialManagerObject.transform.position = enemyOriginalPosition;
+    }
+
+    IEnumerator HandleEnemyDeath()
+    {
+        anim.Play("death", 0, 0f);
+        pausedExternally = true;
+
+        yield return new WaitForSeconds(2f); // Let death play out
+
+        if (musicSource.time < musicSource.clip.length - 1f && !hasRevived)
+        {
+            anim.Play("getup", 0, 0f);
+            yield return new WaitForSeconds(1.2f); // Adjust to match getup anim length
+
+            player.GetComponent<test>().enemyhealth = 100f;
+            player.GetComponent<test>().playerhealth = 100f;
+            hasRevived = true;
+            pausedExternally = false;
+            hasDied = false;
+        }
+        else
+        {
+            // End the game here if music is done
+            Debug.Log("Enemy defeated for good!");
+        }
     }
 
 
