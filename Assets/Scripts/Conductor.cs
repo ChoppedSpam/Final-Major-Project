@@ -65,7 +65,7 @@ public class Conductor : MonoBehaviour
     {
         if (pausedExternally) return;
 
-        if (player.GetComponent<test>().enemyhealth <= 0 && !hasDied)
+        if (player.GetComponent<test>().enemyhealth <= 0 && !hasDied || Input.GetKeyDown(KeyCode.M))
         {
             hasDied = true;
             StartCoroutine(HandleEnemyDeath());
@@ -245,9 +245,12 @@ public class Conductor : MonoBehaviour
 
     IEnumerator PlayEnemyAnimationEarly(float delay, int beat)
     {
+        
+
         yield return new WaitForSeconds(delay);
 
         if (inHitReaction) yield break;
+        if (pausedExternally) yield break;
 
         if (beat % 2 != 0)
         {
@@ -340,14 +343,54 @@ public class Conductor : MonoBehaviour
         tutorialManagerObject.transform.position = enemyOriginalPosition;
     }
 
+    IEnumerator DeathStepBack()
+    {
+        float dashDistance = 5f;        // Distance to knockback
+        float dashDuration = 0.5f;      // Faster knockback movement
+        float pauseDuration = 1.75f;       // Stay back for a moment
+        float returnDuration = 1f;      // Smooth return
+
+        Vector3 backPosition = enemyOriginalPosition + new Vector3(dashDistance, 0f, 0f); // Knockback to the right
+
+        float t = 0f;
+        Vector3 start = tutorialManagerObject.transform.position;
+
+        // Step back
+        while (t < 1f)
+        {
+            t += Time.deltaTime / dashDuration;
+            tutorialManagerObject.transform.position = Vector3.Lerp(start, backPosition, t);
+            yield return null;
+        }
+
+        // Stay at back position for a bit
+        yield return new WaitForSeconds(pauseDuration);
+
+        // Return
+        t = 0f;
+        start = tutorialManagerObject.transform.position;
+
+        while (t < 1f)
+        {
+            t += Time.deltaTime / returnDuration;
+            tutorialManagerObject.transform.position = Vector3.Lerp(start, enemyOriginalPosition, t);
+            yield return null;
+        }
+
+        // Snap to original just in case
+        tutorialManagerObject.transform.position = enemyOriginalPosition;
+    }
+
     IEnumerator HandleEnemyDeath()
     {
-        anim.Play("death", 0, 0f);
         pausedExternally = true;
+        //StartCoroutine(DeathStepBack());
+        anim.SetTrigger("Die");
+        
 
         yield return new WaitForSeconds(2f); // Let death play out
 
-        if (musicSource.time < musicSource.clip.length - 1f && !hasRevived)
+        if (songPosition < musicSource.clip.length - 1f && !hasRevived)
         {
             anim.Play("getup", 0, 0f);
             yield return new WaitForSeconds(1.2f); // Adjust to match getup anim length
