@@ -130,6 +130,7 @@ public class Conductor : MonoBehaviour
         lastBeat = beatRounded;
 
         beatRoundedUp = Mathf.RoundToInt(lastBeat + 1f);
+        GameObject.Find("Player").GetComponent<test>().StartCoroutine("HeartPulse");
 
         // DEBUG INFO
         Debug.Log($"[Conductor] Beat: {beatRounded} | isAttacking: {isAttacking} | inHitReaction: {inHitReaction}");

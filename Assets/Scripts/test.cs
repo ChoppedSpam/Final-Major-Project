@@ -573,4 +573,32 @@ public class test : MonoBehaviour
         }
     }
 
+    IEnumerator HeartPulse()
+    {
+        Vector3 originalScale = tugOfWarFillHeart.localScale;
+        Vector3 pulsedScale = originalScale * 1.2f;
+
+        float t = 0f;
+        float pulseDuration = 0.2f;
+
+        // Scale up
+        while (t < 1f)
+        {
+            t += Time.unscaledDeltaTime / pulseDuration;
+            tugOfWarFillHeart.localScale = Vector3.Lerp(originalScale, pulsedScale, t);
+            yield return null;
+        }
+
+        // Scale down
+        t = 0f;
+        while (t < 1f)
+        {
+            t += Time.unscaledDeltaTime / pulseDuration;
+            tugOfWarFillHeart.localScale = Vector3.Lerp(pulsedScale, originalScale, t);
+            yield return null;
+        }
+
+        tugOfWarFillHeart.localScale = originalScale;
+    }
+
 }
