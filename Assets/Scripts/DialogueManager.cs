@@ -3,11 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using Cinemachine;
+using UnityEditor;
 
 public class DialogueManager : MonoBehaviour
 {
+    private Vector3 fightGraphicOriginalScale;
     public GameObject portraitPlayer;
     public GameObject portraitEnemy;
+
+    public GameObject speechBubblePlayer;
+    public GameObject speechBubbleEnemy;
+
+    public TextMeshProUGUI dialogueTextPlayer;
+    public TextMeshProUGUI dialogueTextEnemy;
 
     [System.Serializable]
     public class DialogueLine
@@ -30,12 +38,16 @@ public class DialogueManager : MonoBehaviour
     public Animator enemyAnimator;
     public Conductor conductor;
 
+    public GameObject postProcessVolume;
+
     public float typeSpeed = 0.03f;
 
     private bool isTyping = false;
 
     void Start()
     {
+        postProcessVolume.SetActive(true);
+        fightGraphicOriginalScale = fightGraphic.transform.localScale;
         Time.timeScale = 0f;
 
         conductor.musicSource.Stop();
@@ -53,26 +65,31 @@ public class DialogueManager : MonoBehaviour
 
     IEnumerator PlayDialogue()
     {
+
         foreach (DialogueLine line in dialogueLines)
         {
             // Switch portrait and camera
             if (line.isPlayerTalking)
             {
-                portraitPlayer.SetActive(true);
-                portraitEnemy.SetActive(false);
+                //portraitPlayer.SetActive(true);
+                //portraitEnemy.SetActive(false);
+                speechBubblePlayer.SetActive(true);
+                speechBubbleEnemy.SetActive(false);
                 vcam_Player.Priority = 11;
                 vcam_Enemy.Priority = 10;
             }
             else
             {
-                portraitPlayer.SetActive(false);
-                portraitEnemy.SetActive(true);
+                //portraitPlayer.SetActive(false);
+                //portraitEnemy.SetActive(true);
+                speechBubblePlayer.SetActive(false);
+                speechBubbleEnemy.SetActive(true);
                 vcam_Player.Priority = 10;
                 vcam_Enemy.Priority = 11;
             }
 
             // Type text
-            yield return StartCoroutine(TypeSentence(line.text));
+            yield return StartCoroutine(TypeSentence(line.text, line.isPlayerTalking));
 
             // Wait for space to continue
             yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
@@ -83,20 +100,40 @@ public class DialogueManager : MonoBehaviour
         StartCoroutine(ShowFightGraphic());
     }
 
-    IEnumerator TypeSentence(string sentence)
+    IEnumerator TypeSentence(string sentence, bool isPlayer)
     {
         isTyping = true;
-        dialogueText.text = "";
-        foreach (char c in sentence)
+
+        if (isPlayer)
         {
-            dialogueText.text += c;
+            dialogueTextPlayer.text = "";
+            dialogueTextEnemy.text = "";
+        }
+        else
+        {
+            dialogueTextPlayer.text = "";
+            dialogueTextEnemy.text = "";
+        }
+
+        for (int i = 0; i < sentence.Length; i++)
+        {
+            if (isPlayer)
+                dialogueTextPlayer.text += sentence[i];
+            else
+                dialogueTextEnemy.text += sentence[i];
+
             yield return new WaitForSecondsRealtime(typeSpeed);
         }
+
         isTyping = false;
     }
 
+
     IEnumerator ShowFightGraphic()
     {
+        postProcessVolume.SetActive(false);
+        speechBubbleEnemy.SetActive(false);
+        speechBubblePlayer.SetActive(false);
         main.Priority = 12;
         fightGraphic.SetActive(true);
         fightGraphic.transform.localScale = Vector3.zero;
@@ -105,7 +142,7 @@ public class DialogueManager : MonoBehaviour
         while (t < 1f)
         {
             t += Time.unscaledDeltaTime * 2f;
-            fightGraphic.transform.localScale = Vector3.Lerp(Vector3.zero, Vector3.one, t);
+            fightGraphic.transform.localScale = Vector3.Lerp(Vector3.zero, fightGraphicOriginalScale, t);
             yield return null;
         }
 
@@ -115,8 +152,10 @@ public class DialogueManager : MonoBehaviour
         StartCoroutine(FadeInUIAndStartGame());
     }
 
+
     IEnumerator FadeInUIAndStartGame()
     {
+
         CanvasGroup group = gameplayUIGroup.GetComponent<CanvasGroup>();
         if (group == null)
         {

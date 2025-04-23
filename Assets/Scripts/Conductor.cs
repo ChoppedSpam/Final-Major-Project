@@ -1,9 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Conductor : MonoBehaviour
 {
+
+    public float playerDamageMultiplier = 1f;
+    public float enemyDamageMultiplier = 1f;
+    public enum DifficultyLevel { Easy, Medium, Hard }
+    public DifficultyLevel currentDifficulty = DifficultyLevel.Medium;
+    private bool kickBeatsGenerated = false;
+
     public bool pausedExternally = false;
     public float delay = 0;
 
@@ -51,6 +59,15 @@ public class Conductor : MonoBehaviour
     private bool hasDied = false;
     private bool hasRevived = false;
 
+    public GameObject gameOverScreen; // Assign in Inspector
+    public GameObject gameWinScreen; // Assign in Inspector
+    private bool gameOverTriggered = false;
+
+    private bool isGameOverScreenActive = false;
+    private bool isGameWinScreenActive = false;
+
+    public bool isFinalStage = false;
+
     void Start()
     {
         enemyOriginalPosition = tutorialManagerObject.transform.position;
@@ -58,22 +75,63 @@ public class Conductor : MonoBehaviour
         AddBeatRangeToMiss(6, 8);
         secPerBeat = 60f / songBpm;
         dspSongTime = (float)AudioSettings.dspTime;
+        switch (currentDifficulty)
+        {
+            case DifficultyLevel.Easy:
+                playerDamageMultiplier = 1.5f;
+                enemyDamageMultiplier = 0.75f;
+                break;
+            case DifficultyLevel.Medium:
+                playerDamageMultiplier = 1f;
+                enemyDamageMultiplier = 1f;
+                break;
+            case DifficultyLevel.Hard:
+                playerDamageMultiplier = 0.75f;
+                enemyDamageMultiplier = 1.5f;
+                break;
+        }
         musicSource.Play();
     }
 
     void Update()
     {
+        if (isGameOverScreenActive && Input.GetKeyDown(KeyCode.R))
+        {
+            Time.timeScale = 1f;
+            
+            UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+        }
+
+        if (isGameWinScreenActive && Input.GetKeyDown(KeyCode.Space))
+        {
+            Time.timeScale = 1f;
+            // Replace with the actual name or build index of your next scene
+            if (isFinalStage)
+            {
+                SceneManager.LoadScene("MM");
+            }
+            else
+            {
+                int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+                SceneManager.LoadScene(currentSceneIndex + 1);
+            }
+            
+        }
+
         if (pausedExternally) return;
 
         if (player.GetComponent<test>().enemyhealth <= 0 && !hasDied || Input.GetKeyDown(KeyCode.M))
         {
             hasDied = true;
+
             StartCoroutine(HandleEnemyDeath());
             return; // Prevent further animation this frame
         }
 
         delay += Time.deltaTime;
         AnimatorStateInfo state = anim.GetCurrentAnimatorStateInfo(0);
+
+        
 
         if (inHitReaction && !isAttacking && state.IsName("idle") && stunduration > 2.5f && GetComponent<test>().enemyhealth > 0f)
         {
@@ -88,10 +146,39 @@ public class Conductor : MonoBehaviour
 
         stunduration += Time.deltaTime;
 
+        if (pausedExternally) return;
+
         songPosition = (float)(AudioSettings.dspTime - dspSongTime);
         songPositionInBeats = songPosition / secPerBeat;
 
-        
+        //anim.Play("idledone");
+
+        // Stop attacks when the song is nearly over (e.g., 1 second before the end)
+        if (songPosition >= musicSource.clip.length - 1f)
+        {
+            Debug.Log("Song is ending - disabling further enemy attacks");
+            anim.SetTrigger("Done");
+            StartCoroutine(TriggerGameWinAfterDelay());
+            if (!anim.GetCurrentAnimatorStateInfo(0).IsName("idledone"))
+            {
+                anim.Play("idledone", 0, 0f);
+            }
+
+            return;
+        }
+
+        if(player.GetComponent<test>().playerhealth <= 0)
+        {
+            anim.SetTrigger("Done");
+            StartCoroutine(TriggerGameOverAfterDelay());
+            if (!anim.GetCurrentAnimatorStateInfo(0).IsName("idledone"))
+            {
+                anim.Play("idledone", 0, 0f);
+            }
+            return;
+        }
+
+
 
         isAttacking = false;
 
@@ -127,6 +214,13 @@ public class Conductor : MonoBehaviour
             tutorialManagerObject.GetComponent<TutorialManager>().TriggerDashTutorial();
             return;
         }
+
+        if (!kickBeatsGenerated && beatRounded >= 20)
+        {
+            GenerateKickBeats();
+            kickBeatsGenerated = true;
+        }
+
         lastBeat = beatRounded;
 
         beatRoundedUp = Mathf.RoundToInt(lastBeat + 1f);
@@ -166,9 +260,9 @@ public class Conductor : MonoBehaviour
     {
         if (inHitReaction) yield break;
 
-        yield return new WaitForSeconds(0.3f); // delay before hitbox appears
+        yield return new WaitForSeconds(0.35f); // delay before hitbox appears
         hitboxKick.SetActive(true);
-        yield return new WaitForSeconds(0.2f); // active time
+        yield return new WaitForSeconds(0.15f); // active time
         hitboxKick.SetActive(false);
         yield return new WaitForSeconds(0.2f); // cooldown
         isAttacking = false;
@@ -280,25 +374,25 @@ public class Conductor : MonoBehaviour
     IEnumerator ActivateJudgmentHitboxes()
     {
         // Delay before early
-        yield return new WaitForSeconds(0.15f);
+        yield return new WaitForSeconds(0.1f);
 
         if (inHitReaction || isstunned) yield break;
         earlyHitbox.SetActive(true);
         yield return new WaitForSeconds(0.08f);
         earlyHitbox.SetActive(false);
-        yield return new WaitForSeconds(0.01f);
+
 
         if (inHitReaction || isstunned) yield break;
         perfectHitbox.SetActive(true);
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(0.15f);
         perfectHitbox.SetActive(false);
-        yield return new WaitForSeconds(0.01f);
+
 
         if (inHitReaction || isstunned) yield break;
         lateHitbox.SetActive(true);
         yield return new WaitForSeconds(0.1f);
         lateHitbox.SetActive(false);
-        yield return new WaitForSeconds(0.01f);
+
 
         if (inHitReaction || isstunned) yield break;
         FindObjectOfType<test>().canPunch = false;
@@ -387,7 +481,7 @@ public class Conductor : MonoBehaviour
         pausedExternally = true;
         //StartCoroutine(DeathStepBack());
         anim.SetTrigger("Die");
-        
+        NPCReactionEvents.OnPlayerHit?.Invoke();
 
         yield return new WaitForSeconds(2f); // Let death play out
 
@@ -406,6 +500,7 @@ public class Conductor : MonoBehaviour
         {
             // End the game here if music is done
             Debug.Log("Enemy defeated for good!");
+            StartCoroutine(TriggerGameWinAfterDelay());
         }
     }
 
@@ -414,5 +509,76 @@ public class Conductor : MonoBehaviour
     {
         float songPosition = (float)(AudioSettings.dspTime - dspSongTime);
         return songPosition / secPerBeat;
+    }
+
+    void GenerateKickBeats()
+    {
+        int totalBeats = Mathf.FloorToInt((float)musicSource.clip.samples / musicSource.clip.frequency / secPerBeat);
+        int startBeat = 22;
+
+        int step = 2; // Ensure we only check even beats
+        int maxKicks = 0;
+
+        switch (currentDifficulty)
+        {
+            case DifficultyLevel.Easy:
+                maxKicks = 5;
+                break;
+            case DifficultyLevel.Medium:
+                maxKicks = 10;
+                break;
+            case DifficultyLevel.Hard:
+                maxKicks = 18;
+                break;
+        }
+
+        List<int> potentialKicks = new List<int>();
+        for (int i = startBeat; i < totalBeats; i += step)
+        {
+            potentialKicks.Add(i);
+        }
+
+        // Shuffle and select random even beats
+        for (int i = 0; i < potentialKicks.Count; i++)
+        {
+            int rnd = Random.Range(i, potentialKicks.Count);
+            int temp = potentialKicks[i];
+            potentialKicks[i] = potentialKicks[rnd];
+            potentialKicks[rnd] = temp;
+        }
+
+        for (int i = 0; i < Mathf.Min(maxKicks, potentialKicks.Count); i++)
+        {
+            if (!kickBeats.Contains(potentialKicks[i]))
+            {
+                kickBeats.Add(potentialKicks[i]);
+            }
+        }
+
+        Debug.Log($"Kick beats generated for difficulty {currentDifficulty}: {string.Join(", ", kickBeats)}");
+    }
+
+    IEnumerator TriggerGameOverAfterDelay()
+    {
+        if (gameOverTriggered) yield break;
+        gameOverTriggered = true;
+
+        yield return new WaitForSeconds(2f);
+
+        gameOverScreen.SetActive(true);
+        Time.timeScale = 0f;
+        isGameOverScreenActive = true;
+    }
+
+    IEnumerator TriggerGameWinAfterDelay()
+    {
+        if (gameOverTriggered) yield break;
+        gameOverTriggered = true;
+
+        yield return new WaitForSeconds(2f);
+
+        gameWinScreen.SetActive(true);
+        Time.timeScale = 0f;
+        isGameWinScreenActive = true;
     }
 }

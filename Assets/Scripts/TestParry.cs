@@ -17,6 +17,7 @@ public class TestParry : MonoBehaviour
         if ((other.CompareTag("Early") || other.CompareTag("Perfect")) && !player.GetComponent<test>().guardcounter)
         {
             Debug.Log("PARRY SUCCESS");
+            
 
             player.GetComponent<test>().StartCoroutine("HandleParryStun");
         }

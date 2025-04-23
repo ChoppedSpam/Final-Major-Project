@@ -2,11 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Playables;
 using UnityEngine.UI;
 using static hurtbox;
 
 public class test : MonoBehaviour
 {
+    public AudioSource hitSoundSource;
+    public AudioSource parrySoundSource;
+    public AudioSource dodgeSoundSource;
 
     public float inputOffset = 0.05f;
     public float timingDiff;
@@ -100,10 +104,13 @@ public class test : MonoBehaviour
     public TMP_Text ComboSpriteText;
     public TMP_SpriteAsset numberSpriteAsset;
     public DigitDisplay scoreDisplay;
+    public DigitDisplay scoreDisplay1;
+    public DigitDisplay scoreDisplay2;
     public DigitDisplay comboDisplay;
 
     private bool hasRevived = false;
 
+    public Transform parrypos;
 
     public string GetSpriteScoreText(int value)
     {
@@ -132,7 +139,7 @@ public class test : MonoBehaviour
     void Start()
     {
         
-
+        
         originalPosition = transform.position;
         enemyhealth = 100f;
         playerhealth = 100f;
@@ -172,6 +179,8 @@ public class test : MonoBehaviour
         dashTimer += Time.deltaTime;
 
         scoreDisplay.SetNumber((int)score);
+        scoreDisplay1.SetNumber((int)score);
+        scoreDisplay2.SetNumber((int)score);
         comboDisplay.SetNumber((int)combo);
 
 
@@ -197,6 +206,7 @@ public class test : MonoBehaviour
 
         if (playerhealth <= 0 && dead == false)
         {
+            NPCReactionEvents.OnPlayerHit?.Invoke();
             anim.Play("stardie");
             StartCoroutine(FreezeOnDeath());
             dead = true;
@@ -279,36 +289,41 @@ public class test : MonoBehaviour
 
         Animator enemyAnim = conductor.GetComponent<Conductor>().anim;
         AnimatorStateInfo enemyState = enemyAnim.GetCurrentAnimatorStateInfo(0);
+        AnimatorStateInfo playerState = anim.GetCurrentAnimatorStateInfo(0);
 
         // Attack input
-        if (Input.GetKeyDown(KeyCode.E) && canPunch && htboxtimer >= 0.22f && !anim.GetCurrentAnimatorStateInfo(0).IsName("StarGetHurt") && !enemyState.IsName("kick"))
+        if (!playerState.IsName("StarGetHurt"))
         {
-            float currentBeat = conductor.GetComponent<Conductor>().GetSongBeatPosition();
-            timepressed = currentBeat + inputOffset;
+            // Punch
+            if (Input.GetKeyDown(KeyCode.E) && canPunch && htboxtimer >= 0.22f && !enemyState.IsName("kick"))
+            {
+                float currentBeat = conductor.GetComponent<Conductor>().GetSongBeatPosition();
+                timepressed = currentBeat + inputOffset;
 
-            // Compare to the actual beat immediately
-            timingDiff = currentBeat - Mathf.Round(currentBeat); // how far off from the closest full beat
+                timingDiff = currentBeat - Mathf.Round(currentBeat);
 
-            anim.Play("Punch");
-            htboxtimer = 0;
-            htbox1.SetActive(true);
-            StartCoroutine(DisableHitboxAfterDelay(htbox1, 0.025f));
-            oldscore = score;
-        }
+                anim.Play("Punch");
+                htboxtimer = 0;
+                htbox1.SetActive(true);
+                StartCoroutine(DisableHitboxAfterDelay(htbox1, 0.025f));
+                oldscore = score;
+            }
 
+            // Guard
+            if (Input.GetKeyDown(KeyCode.W) && htboxtimer2 >= 0.11f)
+            {
+                anim.Play("Guard");
+                htboxtimer2 = 0;
+                htbox2.SetActive(true);
+                StartCoroutine(DisableHitboxAfterDelay(htbox2, 0.15f));
+            }
 
-        if (Input.GetKeyDown(KeyCode.W) && htboxtimer2 >= 0.11f && !anim.GetCurrentAnimatorStateInfo(0).IsName("StarGetHurt"))
-        {
-            anim.Play("Guard");
-            
-            htboxtimer2 = 0;
-            htbox2.SetActive(true);
-            StartCoroutine(DisableHitboxAfterDelay(htbox2, 0.15f));
-        }
-
-        if (Input.GetKeyDown(KeyCode.A) && dashTimer >= dashCooldown && !isDashing)
-        {
-            StartCoroutine(DashBack());
+            // Dash
+            if (Input.GetKeyDown(KeyCode.A) && dashTimer >= dashCooldown && !isDashing)
+            {
+                dodgeSoundSource.Play();
+                StartCoroutine(DashBack());
+            }
         }
 
 
@@ -368,6 +383,8 @@ public class test : MonoBehaviour
         if (collision.gameObject.tag == "Hit" && !isHit && !isInvincible)
         {
             Animator playerAnim = Player.GetComponent<test>().anim;
+            NPCReactionEvents.OnPlayerHit?.Invoke();
+
 
 
             isHit = true;
@@ -387,7 +404,7 @@ public class test : MonoBehaviour
 
     IEnumerator ResetHit()
     {
-        playerhealth -= 5;
+        playerhealth -= 5 * conductor.GetComponent<Conductor>().enemyDamageMultiplier;
         yield return new WaitForSeconds(0.5f); // Cooldown to prevent multiple triggers
         isHit = false;
         
@@ -401,9 +418,33 @@ public class test : MonoBehaviour
 
     IEnumerator HandleParryStun()
     {
+        NPCReactionEvents.OnPlayerHit?.Invoke();
         if (parryCharges <= 0)
             yield break; // No charges available
         conductor.GetComponent<ParryEffectManager>().ShowParryPopup();
+        parrySoundSource.Play();
+        for (int i = 0; i < 4; i++)
+        {
+            Vector3 spawnPos = transform.position;
+            GameObject fx;
+
+            if (i % 2 == 0)
+                fx = Instantiate(htbox1.GetComponent<hurtbox>().BasedPrefab, parrypos.position, Quaternion.identity); // Star
+            else
+                fx = Instantiate(htbox1.GetComponent<hurtbox>().StarFlyPrefab, parrypos.position, Quaternion.identity); // New effect
+
+            Rigidbody2D rb = fx.GetComponent<Rigidbody2D>();
+            if (rb != null)
+            {
+                float angle = Random.Range(240f, 300f) * Mathf.Deg2Rad;
+                float speed = Random.Range(15f, 20f);
+                Vector2 dir = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
+                rb.velocity = dir * speed;
+                rb.angularVelocity = Random.Range(-360f, 360f);
+            }
+
+            Destroy(fx, 1.5f);
+        }
 
         parryCharges--;
         UpdateParryUI();

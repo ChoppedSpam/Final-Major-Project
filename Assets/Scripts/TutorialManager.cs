@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
 
@@ -25,11 +26,16 @@ public class TutorialManager : MonoBehaviour
 
     void Awake()
     {
+        if (SceneManager.GetActiveScene().name != "Tutorial")
+            return;
+
         Instance = this;
     }
 
     public void TriggerPunchTutorial()
     {
+        if (SceneManager.GetActiveScene().name != "Tutorial")
+            return;
         if (inTutorial) return;
 
         inTutorial = true;
@@ -45,6 +51,8 @@ public class TutorialManager : MonoBehaviour
 
     public void TriggerGuardTutorial()
     {
+        if (SceneManager.GetActiveScene().name != "Tutorial")
+            return;
         if (inTutorial) return;
 
         inTutorial = true;
@@ -61,6 +69,8 @@ public class TutorialManager : MonoBehaviour
 
     public void TriggerCounterTutorial()
     {
+        if (SceneManager.GetActiveScene().name != "Tutorial")
+            return;
         if (inTutorial) return;
 
         inTutorial = true;
@@ -77,6 +87,8 @@ public class TutorialManager : MonoBehaviour
 
     public void TriggerDashTutorial()
     {
+        if (SceneManager.GetActiveScene().name != "Tutorial")
+            return;
         if (inTutorial) return;
 
         inTutorial = true;

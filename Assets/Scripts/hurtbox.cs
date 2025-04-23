@@ -20,6 +20,7 @@ public class hurtbox : MonoBehaviour
     public GameObject HitVFXPrefab;
     public GameObject ParryFXPrefab;
     public GameObject StarFlyPrefab;
+    public GameObject BasedPrefab;
 
     
     public float mult = 1f;
@@ -29,16 +30,20 @@ public class hurtbox : MonoBehaviour
     public float playerhealthCalc;
     public bool counter = false;
 
+    
+
 
     void Start()
     {
         
         playerhealthCalc = 100f;
+        
     }
 
     void Update()
     {
-        
+
+        float multiplier = Conductor.GetComponent<Conductor>().playerDamageMultiplier;
 
         if (counter == true)
         {
@@ -183,11 +188,13 @@ public class hurtbox : MonoBehaviour
 
         if (other.gameObject.tag == "Parry" && Player.GetComponent<test>().guardcounter)
         {
-            
+            NPCReactionEvents.OnPlayerHit?.Invoke();
             Debug.Log("PARRY");
             Player.GetComponent<test>().hitperfect++;
+            Player.GetComponent<test>().hitSoundSource.Play();
             Player.GetComponent<test>().score += 300 * mult;
-            Player.GetComponent<test>().enemyhealth -= 10;
+            float multiplier = Conductor.GetComponent<Conductor>().playerDamageMultiplier;
+            Player.GetComponent<test>().enemyhealth -= 6.5f * multiplier;
             Conductor.GetComponent<Conductor>().StartHitReaction();
             FindObjectOfType<CameraShake>().Shake(1f, 0.2f);
             for (int i = 0; i < 4; i++)
@@ -227,10 +234,13 @@ public class hurtbox : MonoBehaviour
 
         if (other.gameObject.tag == "Early")
         {
+            NPCReactionEvents.OnPlayerHit?.Invoke();
             Debug.Log("EARLY");
             Player.GetComponent<test>().hitearly++;
+            Player.GetComponent<test>().hitSoundSource.Play();
             Player.GetComponent<test>().score += 100 * mult;
-            Player.GetComponent<test>().enemyhealth -= 2.5f;
+            float multiplier = Conductor.GetComponent<Conductor>().playerDamageMultiplier;
+            Player.GetComponent<test>().enemyhealth -= 2.5f * multiplier;
             Player.GetComponent<test>().ResetPerfectChain();
             Conductor.GetComponent<Conductor>().StartHitReaction();
             FindObjectOfType<CameraShake>().Shake(1f, 0.2f);
@@ -242,10 +252,13 @@ public class hurtbox : MonoBehaviour
 
         if (other.gameObject.tag == "Late")
         {
+            NPCReactionEvents.OnPlayerHit?.Invoke();
             Debug.Log("LATE");
             Player.GetComponent<test>().hitlate++;
+            Player.GetComponent<test>().hitSoundSource.Play();
             Player.GetComponent<test>().score += 100 * mult;
-            Player.GetComponent<test>().enemyhealth -= 2.5f;
+            float multiplier = Conductor.GetComponent<Conductor>().playerDamageMultiplier;
+            Player.GetComponent<test>().enemyhealth -= 2.5f * multiplier;
             Player.GetComponent<test>().ResetPerfectChain();
             Conductor.GetComponent<Conductor>().StartHitReaction();
             FindObjectOfType<CameraShake>().Shake(1f, 0.2f);
@@ -257,10 +270,13 @@ public class hurtbox : MonoBehaviour
 
         if (other.gameObject.tag == "Perfect")
         {
+            NPCReactionEvents.OnPlayerHit?.Invoke();
             Debug.Log("PERFECT");
             Player.GetComponent<test>().hitperfect++;
+            Player.GetComponent<test>().hitSoundSource.Play();
             Player.GetComponent<test>().score += 300 * mult;
-            Player.GetComponent<test>().enemyhealth -= 5;
+            float multiplier = Conductor.GetComponent<Conductor>().playerDamageMultiplier;
+            Player.GetComponent<test>().enemyhealth -= 5 * multiplier;
             Player.GetComponent<test>().RegisterPerfect();
             Conductor.GetComponent<Conductor>().StartHitReaction();
             FindObjectOfType<CameraShake>().Shake(1f, 0.2f);
