@@ -12817,6 +12817,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8477b8d29d07424aa932a54ff9d1cc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerDamageMultiplier: 1
+  enemyDamageMultiplier: 1
   currentDifficulty: 1
   pausedExternally: 0
   delay: 0
@@ -12850,6 +12852,7 @@ MonoBehaviour:
   parryHitbox: {fileID: 1879973241}
   gameOverScreen: {fileID: 450141498}
   gameWinScreen: {fileID: 1199938389}
+  isFinalStage: 0
 --- !u!82 &1615220116
 AudioSource:
   m_ObjectHideFlags: 0

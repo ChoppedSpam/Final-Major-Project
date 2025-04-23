@@ -92,7 +92,7 @@ public class DialogueManager : MonoBehaviour
             yield return StartCoroutine(TypeSentence(line.text, line.isPlayerTalking));
 
             // Wait for space to continue
-            yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
+            yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.E) || Input.GetMouseButtonDown(0));
         }
 
         // End Dialogue Show fight graphic
