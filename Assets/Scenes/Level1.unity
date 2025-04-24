@@ -1864,7 +1864,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07aa7b77696c0f24aabe13b8b9d4315c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bobAmount: 0.3
+  bobAmount: 0.2
   bobSpeed: 5
   normalSprite: {fileID: 21300000, guid: 74a3c4bc8e0ce854dae9ac00b7afd6be, type: 3}
   hitSprite: {fileID: 21300000, guid: 89f44ecb348bc944c96dd08e1e76e3e7, type: 3}
@@ -3723,7 +3723,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
+    rgba: 4278190080
   m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -3821,7 +3821,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07aa7b77696c0f24aabe13b8b9d4315c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bobAmount: 0.3
+  bobAmount: 0.2
   bobSpeed: 5
   normalSprite: {fileID: 21300000, guid: 065ee97c63d363d499042022e48d411e, type: 3}
   hitSprite: {fileID: 21300000, guid: 451e2bd962476984dbedcef34e00f232, type: 3}
@@ -6299,7 +6299,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07aa7b77696c0f24aabe13b8b9d4315c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bobAmount: 0.3
+  bobAmount: 0.2
   bobSpeed: 5
   normalSprite: {fileID: 21300000, guid: c1e1b7fe4ca2f5c4694e5b4f7055ce27, type: 3}
   hitSprite: {fileID: 21300000, guid: a4a537e3103eaea4e900f9193be31abd, type: 3}
@@ -11555,7 +11555,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07aa7b77696c0f24aabe13b8b9d4315c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bobAmount: 0.3
+  bobAmount: 0.2
   bobSpeed: 5
   normalSprite: {fileID: 21300000, guid: 2cdf747325bfdb24f912f625393ce2c0, type: 3}
   hitSprite: {fileID: 21300000, guid: ac2199ff1e01e92478cd8527e45d53e5, type: 3}
