@@ -1,6 +1,7 @@
 using JetBrains.Annotations;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class hurtbox : MonoBehaviour
@@ -194,7 +195,15 @@ public class hurtbox : MonoBehaviour
             Player.GetComponent<test>().hitSoundSource.Play();
             Player.GetComponent<test>().score += 300 * mult;
             float multiplier = Conductor.GetComponent<Conductor>().playerDamageMultiplier;
-            Player.GetComponent<test>().enemyhealth -= 6.5f * multiplier;
+            if (SceneManager.GetActiveScene().name == "CustomLvl")
+            {
+                Player.GetComponent<test>().enemyhealth -= 1f * multiplier;
+
+            }
+            else
+            {
+                Player.GetComponent<test>().enemyhealth -= 2.5f * multiplier;
+            }
             Conductor.GetComponent<Conductor>().StartHitReaction();
             FindObjectOfType<CameraShake>().Shake(1f, 0.2f);
             for (int i = 0; i < 4; i++)
@@ -240,7 +249,15 @@ public class hurtbox : MonoBehaviour
             Player.GetComponent<test>().hitSoundSource.Play();
             Player.GetComponent<test>().score += 100 * mult;
             float multiplier = Conductor.GetComponent<Conductor>().playerDamageMultiplier;
-            Player.GetComponent<test>().enemyhealth -= 2.5f * multiplier;
+            if (SceneManager.GetActiveScene().name == "CustomLvl")
+            {
+                Player.GetComponent<test>().enemyhealth -= 0.5f * multiplier;
+
+            }
+            else
+            {
+                Player.GetComponent<test>().enemyhealth -= 2.5f * multiplier;
+            }
             Player.GetComponent<test>().ResetPerfectChain();
             Conductor.GetComponent<Conductor>().StartHitReaction();
             FindObjectOfType<CameraShake>().Shake(1f, 0.2f);
@@ -258,7 +275,15 @@ public class hurtbox : MonoBehaviour
             Player.GetComponent<test>().hitSoundSource.Play();
             Player.GetComponent<test>().score += 100 * mult;
             float multiplier = Conductor.GetComponent<Conductor>().playerDamageMultiplier;
-            Player.GetComponent<test>().enemyhealth -= 2.5f * multiplier;
+            if (SceneManager.GetActiveScene().name == "CustomLvl")
+            {
+                Player.GetComponent<test>().enemyhealth -= 0.5f * multiplier;
+
+            }
+            else
+            {
+                Player.GetComponent<test>().enemyhealth -= 2.5f * multiplier;
+            }
             Player.GetComponent<test>().ResetPerfectChain();
             Conductor.GetComponent<Conductor>().StartHitReaction();
             FindObjectOfType<CameraShake>().Shake(1f, 0.2f);
@@ -276,7 +301,16 @@ public class hurtbox : MonoBehaviour
             Player.GetComponent<test>().hitSoundSource.Play();
             Player.GetComponent<test>().score += 300 * mult;
             float multiplier = Conductor.GetComponent<Conductor>().playerDamageMultiplier;
-            Player.GetComponent<test>().enemyhealth -= 5 * multiplier;
+            if (SceneManager.GetActiveScene().name == "CustomLvl")
+            {
+                Player.GetComponent<test>().enemyhealth -= 0.5f * multiplier;
+
+            }
+            else
+            {
+                Player.GetComponent<test>().enemyhealth -= 2.5f * multiplier;
+            }
+            
             Player.GetComponent<test>().RegisterPerfect();
             Conductor.GetComponent<Conductor>().StartHitReaction();
             FindObjectOfType<CameraShake>().Shake(1f, 0.2f);

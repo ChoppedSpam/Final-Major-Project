@@ -6,10 +6,12 @@ using UnityEngine.SceneManagement;
 public class MainMenu : MonoBehaviour
 {
     public GameObject lvlselect;
+    public GameObject credits;
     // Start is called before the first frame update
     void Start()
     {
         lvlselect?.SetActive(false);
+        credits?.SetActive(false);
     }
 
     // Update is called once per frame
@@ -34,9 +36,15 @@ public class MainMenu : MonoBehaviour
         lvlselect.SetActive(true);
     }
 
+    public void Credits()
+    {
+        credits?.SetActive(true);
+    }
+
     public void back()
     {
         lvlselect?.SetActive(false);
+        credits?.SetActive(false);
     }
 
     public void lvl1()
@@ -52,5 +60,10 @@ public class MainMenu : MonoBehaviour
     public void lvl3()
     {
         SceneManager.LoadScene("Level2");
+    }
+
+    public void lvl4()
+    {
+        SceneManager.LoadScene("CustomLvl");
     }
 }

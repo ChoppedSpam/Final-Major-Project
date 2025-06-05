@@ -4013,7 +4013,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: d2552d408f2237c4ba6680863637974a, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -5094,7 +5094,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 9701d8bf588567c46a0c33a7d7870b21, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.5
+  m_Volume: 0.25
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -11846,7 +11846,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: ac189b71e110ec24f99712ad3c501756, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.9
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -16064,6 +16064,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fd2fd9c193cae64ab2df960754a7fc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Vid: {fileID: 0}
   portraitPlayer: {fileID: 1888903637}
   portraitEnemy: {fileID: 1579002121}
   speechBubblePlayer: {fileID: 336559051}

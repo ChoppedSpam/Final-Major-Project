@@ -71,6 +71,117 @@ public class Conductor : MonoBehaviour
     void Start()
     {
         enemyOriginalPosition = tutorialManagerObject.transform.position;
+
+        if (SceneManager.GetActiveScene().name == "CustomLvl")
+        {
+            AddBeatRangeToMiss(0, 30);
+            AddBeatRangeToMiss(33, 36);
+            AddBeatRangeToMiss(39, 40);
+            AddBeatRangeToMiss(43, 44);
+            AddBeatRangeToMiss(47, 48);
+            AddBeatRangeToMiss(51, 52);
+            AddBeatRangeToMiss(55, 56);
+            AddBeatRangeToMiss(59, 60);
+            AddBeatRangeToMiss(63, 64);
+            AddBeatRangeToMiss(67, 68);
+            AddBeatRangeToMiss(71, 72);
+            AddBeatRangeToMiss(75, 76);
+            AddBeatRangeToMiss(79, 80);
+            AddBeatRangeToMiss(83, 84);
+            AddBeatRangeToMiss(87, 88);
+            AddBeatRangeToMiss(91, 92);
+            AddBeatRangeToMiss(109, 109);
+            AddBeatRangeToMiss(115, 115);
+
+
+            
+            AddBeatRangeToMiss(164, 164);
+            AddBeatRangeToMiss(165, 165);
+            AddBeatRangeToMiss(166, 166);
+            AddBeatRangeToMiss(167, 167);
+
+            
+
+            AddBeatRangeToMiss(173, 174);
+            AddBeatRangeToMiss(180, 181);
+            AddBeatRangeToMiss(192, 193);
+            AddBeatRangeToMiss(200, 200);
+
+            kickBeats.Add(255);
+            AddBeatRangeToMiss(256, 259);
+            AddBeatRangeToMiss(259, 260);
+            kickBeats.Add(261);
+            AddBeatRangeToMiss(262, 263);
+
+            AddBeatRangeToMiss(264, 265);
+            AddBeatRangeToMiss(268, 269);
+            AddBeatRangeToMiss(272, 273);
+            AddBeatRangeToMiss(276, 277);
+            AddBeatRangeToMiss(280, 281);
+            AddBeatRangeToMiss(284, 284);
+            AddBeatRangeToMiss(287, 288);
+            AddBeatRangeToMiss(291, 292);
+            AddBeatRangeToMiss(295, 296);
+            AddBeatRangeToMiss(299, 300);
+            AddBeatRangeToMiss(303, 304);
+            AddBeatRangeToMiss(307, 308);
+            AddBeatRangeToMiss(311, 312);
+            AddBeatRangeToMiss(315, 316);
+            AddBeatRangeToMiss(319, 319);
+            AddBeatRangeToMiss(322, 322);
+            AddBeatRangeToMiss(330, 330);
+            AddBeatRangeToMiss(350, 352);
+
+            AddBeatRangeToMiss(358, 360);
+            kickBeats.Add(361);
+            AddBeatRangeToMiss(362, 366);
+
+            kickBeats.Add(367);
+            AddBeatRangeToMiss(368, 369);
+
+            AddBeatRangeToMiss(372, 372);
+            AddBeatRangeToMiss(375, 376);
+            AddBeatRangeToMiss(379, 380);
+            AddBeatRangeToMiss(383, 384);
+            AddBeatRangeToMiss(387, 388);
+            AddBeatRangeToMiss(391, 392);
+            AddBeatRangeToMiss(395, 396);
+            AddBeatRangeToMiss(399, 400);
+            AddBeatRangeToMiss(403, 404);
+            AddBeatRangeToMiss(407, 409);
+            AddBeatRangeToMiss(413, 413);
+            AddBeatRangeToMiss(417, 419);
+            AddBeatRangeToMiss(422, 423);
+            AddBeatRangeToMiss(426, 426);
+            AddBeatRangeToMiss(429, 431);
+            AddBeatRangeToMiss(434, 434);
+            AddBeatRangeToMiss(437, 439);
+            AddBeatRangeToMiss(442, 446);
+            AddBeatRangeToMiss(449, 449);
+            AddBeatRangeToMiss(459, 459);
+            AddBeatRangeToMiss(471, 471);
+            AddBeatRangeToMiss(475, 475);
+
+            kickBeats.Add(505);
+            AddBeatRangeToMiss(506, 507);
+            kickBeats.Add(508);
+            AddBeatRangeToMiss(509, 510);
+            kickBeats.Add(511);
+            AddBeatRangeToMiss(512, 514);
+            AddBeatRangeToMiss(515, 516);
+
+            AddBeatRangeToMiss(517, 518);
+            AddBeatRangeToMiss(521, 522);
+            AddBeatRangeToMiss(525, 526);
+            AddBeatRangeToMiss(529, 530);
+            AddBeatRangeToMiss(533, 534);
+            AddBeatRangeToMiss(537, 538);
+            AddBeatRangeToMiss(541, 542);
+            AddBeatRangeToMiss(571, 571);
+            AddBeatRangeToMiss(575, 592);
+            AddBeatRangeToMiss(592, 700);
+        }
+
         AddBeatRangeToMiss(0, 2);
         AddBeatRangeToMiss(6, 8);
         secPerBeat = 60f / songBpm;
@@ -95,6 +206,15 @@ public class Conductor : MonoBehaviour
 
     void Update()
     {
+        if (SceneManager.GetActiveScene().name == "CustomLvl")
+        {
+            if (songPositionInBeats >= 575f)
+            {
+                StartCoroutine(TriggerGameWinAfterDelay());
+                gameOverTriggered = true; 
+            }
+        }
+
         if (isGameOverScreenActive && Input.GetKeyDown(KeyCode.R))
         {
             Time.timeScale = 1f;
@@ -215,11 +335,20 @@ public class Conductor : MonoBehaviour
             return;
         }
 
-        if (!kickBeatsGenerated && beatRounded >= 20)
+        if (SceneManager.GetActiveScene().name == "CustomLvl")
         {
-            GenerateKickBeats();
-            kickBeatsGenerated = true;
+
         }
+        else
+        {
+            if (!kickBeatsGenerated && beatRounded >= 20)
+            {
+                GenerateKickBeats();
+                kickBeatsGenerated = true;
+            }
+        }
+
+        
 
         lastBeat = beatRounded;
 
@@ -347,28 +476,64 @@ public class Conductor : MonoBehaviour
         if (inHitReaction) yield break;
         if (pausedExternally) yield break;
 
-        if (beat % 2 != 0)
+        if (SceneManager.GetActiveScene().name == "CustomLvl")
         {
-            anim.Play("Startup1", 0, 0f);
-        }
-        else if(!isstunned)
-        {
-            isAttacking = true;
+            if (!isstunned)
+            {
+                isAttacking = true;
 
-            if (kickBeats.Contains(beat))
-            {
-                isKicking = true;
-                anim.Play("kick", 0, 0f);
-                StartCoroutine(ActivateHitboxKick());
-                StartCoroutine(KickStepBack());
-            }
-            else
-            {
-                isKicking = false;
-                anim.Play("hit1", 0, 0f);
-                StartCoroutine(ActivateJudgmentHitboxes());
+                if (kickBeats.Contains(beat)) // Check for kick beats first
+                {
+                    isKicking = true;
+                    anim.Play("kick", 0, 0f);
+                    StartCoroutine(ActivateHitboxKick());
+                    StartCoroutine(KickStepBack());
+                }
+                else // If not a kick beat, it's a regular attack or startup
+                {
+                    // This part needs to align with your desired CustomLvl rhythm for non-kicks.
+                    // Assuming you want regular hits on odd beats and startups on even beats still:
+                    if (beat % 2 == 0) // Even beat (for Startup animation)
+                    {
+                        anim.Play("Startup1", 0, 0f);
+                        isAttacking = false; // Startup isn't a direct hit
+                    }
+                    else // Odd beat (for actual hit)
+                    {
+                        isKicking = false;
+                        anim.Play("hit1", 0, 0f);
+                        StartCoroutine(ActivateJudgmentHitboxes());
+                    }
+                }
             }
         }
+        else
+        {
+            if (beat % 2 != 0)
+            {
+                anim.Play("Startup1", 0, 0f);
+            }
+            else if (!isstunned)
+            {
+                isAttacking = true;
+
+                if (kickBeats.Contains(beat))
+                {
+                    isKicking = true;
+                    anim.Play("kick", 0, 0f);
+                    StartCoroutine(ActivateHitboxKick());
+                    StartCoroutine(KickStepBack());
+                }
+                else
+                {
+                    isKicking = false;
+                    anim.Play("hit1", 0, 0f);
+                    StartCoroutine(ActivateJudgmentHitboxes());
+                }
+            }
+        }
+
+        
     }
 
     IEnumerator ActivateJudgmentHitboxes()
@@ -502,6 +667,8 @@ public class Conductor : MonoBehaviour
             Debug.Log("Enemy defeated for good!");
             StartCoroutine(TriggerGameWinAfterDelay());
         }
+
+        
     }
 
 

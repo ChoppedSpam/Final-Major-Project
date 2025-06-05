@@ -34,6 +34,8 @@ public class test : MonoBehaviour
     public GameObject EnemyPortrait3;
     public RectTransform tugOfWarFill;
     public RectTransform tugOfWarFillHeart;
+    private Vector3 _initialHeartScale;
+    private Coroutine _currentHeartPulseCoroutine;
     public float lastTugX = 0f;
     public float barFlashThreshold = 30f; // How far must the bar jump to flash
     public RectTransform tugFlashTarget;
@@ -132,6 +134,14 @@ public class test : MonoBehaviour
             result += $"<sprite index={index}>";  // Use index here
         }
         return result;
+    }
+
+    void Awake()
+    {
+        if (tugOfWarFillHeart != null)
+        {
+            _initialHeartScale = tugOfWarFillHeart.localScale;
+        }
     }
 
 
@@ -614,32 +624,49 @@ public class test : MonoBehaviour
         }
     }
 
-    IEnumerator HeartPulse()
+    public IEnumerator HeartPulse()
     {
-        Vector3 originalScale = tugOfWarFillHeart.localScale;
-        Vector3 pulsedScale = originalScale * 1.2f;
+        if (_currentHeartPulseCoroutine != null)
+        {
+            StopCoroutine(_currentHeartPulseCoroutine);
+            if (tugOfWarFillHeart != null)
+            {
+                tugOfWarFillHeart.localScale = _initialHeartScale;
+            }
+        }
 
+        _currentHeartPulseCoroutine = StartCoroutine(DoHeartPulseInternal());
+        yield return _currentHeartPulseCoroutine;
+        _currentHeartPulseCoroutine = null;
+    }
+
+    private IEnumerator DoHeartPulseInternal()
+    {
+        Vector3 pulsedScale = _initialHeartScale * 1.2f;
         float t = 0f;
         float pulseDuration = 0.2f;
 
-        // Scale up
         while (t < 1f)
         {
             t += Time.unscaledDeltaTime / pulseDuration;
-            tugOfWarFillHeart.localScale = Vector3.Lerp(originalScale, pulsedScale, t);
+            if (tugOfWarFillHeart == null) yield break;
+            tugOfWarFillHeart.localScale = Vector3.Lerp(_initialHeartScale, pulsedScale, t);
             yield return null;
         }
 
-        // Scale down
         t = 0f;
         while (t < 1f)
         {
             t += Time.unscaledDeltaTime / pulseDuration;
-            tugOfWarFillHeart.localScale = Vector3.Lerp(pulsedScale, originalScale, t);
+            if (tugOfWarFillHeart == null) yield break;
+            tugOfWarFillHeart.localScale = Vector3.Lerp(pulsedScale, _initialHeartScale, t);
             yield return null;
         }
 
-        tugOfWarFillHeart.localScale = originalScale;
+        if (tugOfWarFillHeart != null)
+        {
+            tugOfWarFillHeart.localScale = _initialHeartScale;
+        }
     }
 
 }

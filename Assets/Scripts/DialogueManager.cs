@@ -4,9 +4,11 @@ using UnityEngine;
 using TMPro;
 using Cinemachine;
 using UnityEditor;
+using UnityEngine.SceneManagement;
 
 public class DialogueManager : MonoBehaviour
 {
+    public GameObject Vid;
     private Vector3 fightGraphicOriginalScale;
     public GameObject portraitPlayer;
     public GameObject portraitEnemy;
@@ -46,6 +48,11 @@ public class DialogueManager : MonoBehaviour
 
     void Start()
     {
+        if (SceneManager.GetActiveScene().name == "CustomLvl")
+        {
+            Vid.SetActive(false);
+        }
+        
         postProcessVolume.SetActive(true);
         fightGraphicOriginalScale = fightGraphic.transform.localScale;
         Time.timeScale = 0f;
@@ -181,5 +188,11 @@ public class DialogueManager : MonoBehaviour
         conductor.ResumeAndRecalculateDSPTime();
         conductor.pausedExternally = false;
         conductor.enabled = true;
+
+
+        if (SceneManager.GetActiveScene().name == "CustomLvl")
+        {
+            Vid.SetActive(true);
+        }
     }
 }
